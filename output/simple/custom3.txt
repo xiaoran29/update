@@ -1,4 +1,4 @@
-# 更新标记: 2025-11-13 21:52:43
+# 更新标记: 2025-11-14 21:57:15
 🌐央视频道,#genre#
 CCTV1,http://222.218.122.93:8188/udp/239.81.0.102:4056$广西电信11
 CCTV+1,https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL1.smil/playlist.m3u8

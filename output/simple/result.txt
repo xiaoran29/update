@@ -1,6 +1,6 @@
-# 更新标记: 2025-11-13 21:52:43
+# 更新标记: 2025-11-14 21:57:15
 🕘️更新时间,#genre#
-2025-11-14 05:00:52,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
+2025-11-15 04:58:47,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
 
 🌐央视频道,#genre#
 CCTV1,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
@@ -1169,7 +1169,7 @@ BBS,http://bbstv.clouducs.com:1935/bbstv-live/livestream/chunklist_w1216149699.m
 EBS1,http://ebsonairios.ebs.co.kr/ebsutablet500k/tablet500k/playlist.m3u8
 EBS2,http://ebsonairios.ebs.co.kr/ebs2familypc/familypc1m/playlist.m3u8
 EBSe,http://ebsonairios.ebs.co.kr/plus3familypc/familypc1m/playlist.m3u8
-KCTV,http://119.77.96.184:1935/chn05/chn05/chunklist_w644291506.m3u8
+KCTV,http://119.77.96.184:1935/chn05/chn05/chunklist.m3u
 KBS世界,https://wms4-kortv.akamaized.net/a_live/63719963/smil:20ch011.smil/playlist.m3u8
 C,http://112.175.51.214:1935/live/myStream/playlist.m3u8
 EBS少儿,http://ebsonairios.ebs.co.kr/ebsutablet500k/_definst_/tablet500k/chunklist_w1965791004.m3u8
