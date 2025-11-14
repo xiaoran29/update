@@ -8,7 +8,7 @@ on:
         description: '源仓库信息（用户/仓库名@分支）'
         type: string
         required: true
-        default: 'xiaoran67/repository@main'
+        default: 'xiaoran67/update@main'
       source_folder:
         description: '源仓库同步路径（留空=根目录）'
         type: string
@@ -18,13 +18,13 @@ on:
         description: '源仓库Token的Secret名称'
         type: string
         required: false
-        default: 'CUSTOM67_GITHUB_TOKEN'
+        default: 'XIAORAN67_GITHUB_TOKEN'
       
       target:
         description: '目标仓库信息（用户/仓库名@分支）'
         type: string
         required: true
-        default: 'xiaoran67/repository@main'
+        default: 'xiaoran29/update@main'
       target_folder:
         description: '目标仓库接收路径（留空=根目录）'
         type: string
@@ -39,7 +39,7 @@ on:
         description: '目标仓库Token的Secret名称'
         type: string
         required: false
-        default: 'CUSTOM67_GITHUB_TOKEN'
+        default: 'XIAORAN29_GITHUB_TOKEN'
       
       sync_strategy:
         description: '同步策略'

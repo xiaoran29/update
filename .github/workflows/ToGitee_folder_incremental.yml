@@ -33,7 +33,7 @@ jobs:
       - name: Clone Target
         run: |
           git clone --depth=1 \
-            "https://xiaoran67:${{ secrets.GITEE_ACCESS_TOKEN }}@gitee.com/xiaoran67/${{ inputs.target-repo || 'update' }}.git" \
+            "https://xiaoran67:${{ secrets.XIAORAN67_GITEE_TOKEN }}@gitee.com/xiaoran67/${{ inputs.target-repo || 'update' }}.git" \
             target
 
       # 3. 计算源文件夹哈希

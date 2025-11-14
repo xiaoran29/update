@@ -36,7 +36,7 @@ jobs:
           GITCODE_USER="xiaoran79"
           GITCODE_REPO="${{ inputs.target-repo || 'update' }}"
           git clone --depth=1 \
-            "https://${GITCODE_USER}:${{ secrets.GITCODE_ACCESS_TOKEN }}@gitcode.com/${GITCODE_USER}/${GITCODE_REPO}.git" \
+            "https://${GITCODE_USER}:${{ secrets.XIAORAN79_GITCODE_TOKEN }}@gitcode.com/${GITCODE_USER}/${GITCODE_REPO}.git" \
             target
 
       # 3. 计算源文件夹哈希（校验文件一致性）

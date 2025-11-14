@@ -28,7 +28,7 @@ jobs:
           GITCODE_USER="xiaoran79"
           GITCODE_REPO="${{ inputs.target-repo || 'update' }}"
           git clone \
-            "https://${GITCODE_USER}:${{ secrets.GITCODE_ACCESS_TOKEN }}@gitcode.com/${GITCODE_USER}/${GITCODE_REPO}.git" \
+            "https://${GITCODE_USER}:${{ secrets.XIAORAN79_GITCODE_TOKEN }}@gitcode.com/${GITCODE_USER}/${GITCODE_REPO}.git" \
             target
 
       # 3. 全量同步：覆盖目标仓库（保留 .git 目录）
