@@ -1,0 +1,74 @@
+name: Sync Entire Repo to GitCode ✔
+
+on:
+  # UTC 时间22:05触发，北京时间次日6:05
+  schedule:
+    - cron: '5 22 * * *'
+  workflow_dispatch:
+    inputs:
+      target-repo:
+        description: 'GitCode 仓库名'
+        required: false
+        default: 'update'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 检出源仓库（完整克隆 GitHub 源仓库）
+      - name: Checkout Full Source Repo
+        uses: actions/checkout@v4
+        with:
+          path: src
+          fetch-depth: 0  # 完整克隆所有历史
+
+      # 2. 克隆目标仓库（GitCode 完整仓库）
+      - name: Clone Full Target Repo
+        run: |
+          GITCODE_USER="xiaoran79"
+          GITCODE_REPO="${{ inputs.target-repo || 'update' }}"
+          git clone \
+            "https://${GITCODE_USER}:${{ secrets.GITCODE_ACCESS_TOKEN }}@gitcode.com/${GITCODE_USER}/${GITCODE_REPO}.git" \
+            target
+
+      # 3. 全量同步：覆盖目标仓库（保留 .git 目录）
+      - name: Full Repo Sync
+        run: |
+          # 清空目标仓库内容（除 .git 目录外）
+          cd target
+          find . -maxdepth 1 ! -name ".git" ! -name "." -exec rm -rf {} +
+          # 复制源仓库所有内容到目标仓库
+          cp -r ../src/* .
+          cp -r ../src/.* .  # 复制隐藏文件
+
+      # 4. 检查目标仓库是否有变化
+      - name: Check Changes
+        id: check_changes
+        run: |
+          cd target
+          git status --porcelain
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "CHANGES_DETECTED=true" >> $GITHUB_ENV
+          else
+            echo "CHANGES_DETECTED=false" >> $GITHUB_ENV
+          fi
+
+      # 5. 提交并推送全量更新
+      - name: Commit and Push Full Repo
+        if: env.CHANGES_DETECTED == 'true'
+        run: |
+          cd target
+          git config user.name "Auto Sync Bot"
+          git config user.email "auto-sync@noreply.github.com"
+          git add -A
+          git commit -m "🔄 Full repo sync: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
+          git push origin HEAD --force  # 全量同步建议强制推送
+
+      # 6. 输出同步结果
+      - name: Sync Report
+        run: |
+          if [ "$CHANGES_DETECTED" = "true" ]; then
+            echo "✅ 已完成 GitHub 到 GitCode 的全仓库同步并推送"
+          else
+            echo "ℹ️ 无需同步：GitHub 源与 GitCode 目标仓库内容完全一致"
+          fi
