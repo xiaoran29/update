@@ -1,5 +1,5 @@
 🕘️更新时间,#genre#
-2025-11-20 04:59:05,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
+2025-11-21 04:59:40,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
 
 🌐央视频道,#genre#
 CCTV1,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
@@ -793,7 +793,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8
 大湾区卫视,http://183.11.239.36:808/hls/132/index.m3u8
 大湾区卫视,http://113.15.109.216:59901/tsfile/live/1010_1.m3u8?key=txiptv&playlive=1&authid=0
-大湾区卫视,http://8.138.7.223/tv/gd.php?id=0008
 大湾区卫视,http://8.138.7.223/tv/hot.php?id=53
 大湾区卫视,http://gmxw.7766.org:808/hls/132/index.m3u8
 大湾区卫视,http://3501776.xyz:35455/itv/1000000002000011619.m3u8
@@ -804,6 +803,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 大湾区卫视,http://120.77.205.62:8087/rtp/239.77.0.215:5146
 大湾区卫视,http://www.kaniptv.cn/zy/cd.php?id=1197
 大湾区卫视,http://mg.hmysapp.cn:177/ckmg/zb.php?id=dwqws
+大湾区卫视,http://www.dsk.cc/gdtv/gdtv.php?id=dwqws
 天津卫视,http://112.132.10.54:9901/tsfile/live/1017_8.m3u8?key=txiptv&playlive=1&authid=0
 天津卫视,http://221.7.175.154:8445/tsfile/live/0135_1.m3u8?key=txiptv&playlive=1&authid=0
 天津卫视,http://171.117.244.149:9003/hls/45/index.m3u8
@@ -1416,7 +1416,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 宁波象山,http://l.cztvcloud.com/channels/lantian/SXxiangshan1/720p.m3u8?zzhed
 普陀综合,http://l.cztvcloud.com/channels/lantian/SXputuo1/720p.m3u8
 庆元综合,http://hls.quklive.com/live/play-sh-21.quklive.com/1723084230809265.m3u8?auth_key=2048470245-4efd9042b7a547588c22340ae9e59235-0-e5300c467f3d03ce5ed13e629b0e73d6&decode__1507=eqAh0IxGxmOGO7D%2FKW0%3DXy72iDCWzAeD
-庆元综合,http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8?zzhed[浙江]洞头综合频道
 庆元综合,http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8?fbl=
 衢江综合,http://l.cztvcloud.com/channels/lantian/SXqujiang1/720p.m3u8?zzhed
 青田电视,http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8?zzhed
@@ -1434,7 +1433,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 丽水青田综合,http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8
 丽水龙泉综合,http://l.cztvcloud.com/channels/lantian/SXlongquan1/720p.m3u8
 宁波余姚生活,http://l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m3u8
-松阳综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8?zzhed;http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8zzhed
 松阳综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8?fbl=
 温州永嘉综合,http://l.cztvcloud.com/channels/lantian/SXyongjia1/720p.m3u8
 绍兴上虞综合,http://l.cztvcloud.com/channels/lantian/SXshangyu1/720p.m3u8
@@ -1462,7 +1460,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 杭州余杭平安,http://l.cztvcloud.com/channels/lantian/SXyuhang2/720p.m3u8
 杭州余杭未来,http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8
 广东：经济科教,https://p2.vzan.com/slowlive/677282322271134305/live.m3u8
-广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=9dd8bdb55106c41c87ad50d630b092dd&txTime=18d151ac310
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=f0147ae6453a80f5989f382368b72aad&txTime=18d00acf487
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=1b3fcaebe0459e7ca2876c2d5493cfac&txTime=18d047b699e
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=a484293b0e6036fb053179bdffaf7127&txTime=18e0d9e3c22
@@ -1477,6 +1474,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 广州综合,https://tencentplaywebsite.gztv.com/live/zonghes.m3u8?txSecret=751b5ecd94a0d9d34c7e37e25bb8b27a&txTime=193108637cb
 广州综合,http://tp88.cn/IPTV/guangdong/gztv.php?id=zhonghe
 广州综合,http://120.77.205.62:8087/rtp/239.253.43.71:5146
+广州综合,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=49c8041461997c7a97dbcc3c7fd11b4f&txTime=18d00acf487
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=9be68e7c35579d02d11f6968531343ea&txTime=1903ea2dd6a
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=d295a772fb08e03b40f412ee48e70fb0&txTime=18d048582e3
@@ -1739,7 +1737,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8
 大湾区卫视,http://183.11.239.36:808/hls/132/index.m3u8
 大湾区卫视,http://113.15.109.216:59901/tsfile/live/1010_1.m3u8?key=txiptv&playlive=1&authid=0
-大湾区卫视,http://8.138.7.223/tv/gd.php?id=0008
 大湾区卫视,http://8.138.7.223/tv/hot.php?id=53
 大湾区卫视,http://gmxw.7766.org:808/hls/132/index.m3u8
 大湾区卫视,http://3501776.xyz:35455/itv/1000000002000011619.m3u8
@@ -1750,7 +1747,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 大湾区卫视,http://120.77.205.62:8087/rtp/239.77.0.215:5146
 大湾区卫视,http://www.kaniptv.cn/zy/cd.php?id=1197
 大湾区卫视,http://mg.hmysapp.cn:177/ckmg/zb.php?id=dwqws
-广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=9dd8bdb55106c41c87ad50d630b092dd&txTime=18d151ac310
+大湾区卫视,http://www.dsk.cc/gdtv/gdtv.php?id=dwqws
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=f0147ae6453a80f5989f382368b72aad&txTime=18d00acf487
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=1b3fcaebe0459e7ca2876c2d5493cfac&txTime=18d047b699e
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=a484293b0e6036fb053179bdffaf7127&txTime=18e0d9e3c22
@@ -1765,6 +1762,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 广州综合,https://tencentplaywebsite.gztv.com/live/zonghes.m3u8?txSecret=751b5ecd94a0d9d34c7e37e25bb8b27a&txTime=193108637cb
 广州综合,http://tp88.cn/IPTV/guangdong/gztv.php?id=zhonghe
 广州综合,http://120.77.205.62:8087/rtp/239.253.43.71:5146
+广州综合,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8
 广州影视,https://tencentplay.gztv.com/live/yingshi.m3u8?txSecret=7e9bddad7c8911626ed1d2c09fc605d9&txTime=18d00acf487
 广州影视,http://120.77.205.62:8087/rtp/239.253.43.68:5146
 广州影视,https://tencentplay.gztv.com/live/yingshi.m3u8?txSecret=ec79a0d817981989c161f548c48c2954&txTime=1903e79e680
@@ -2025,7 +2023,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 武义新闻综合,http://play-sh13.quklive.com/live/1707437639053211.m3u8?auth_key=2039926222-0c20643324d74ab6bca329f2864d9615-0-ad7dc9def9f83b2cc7693a23f6d91251
 武义新闻综合,http://l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3u8
 桐庐综合,https://31666.hlsplay.aodianyun.com/tv_radio_31666/tv_channel_3566.m3u8?auth_key=4867613167-0-0-7e4d136d59c046f779f0c50461de5fe5&extra_key=ZsnRdSSZsd_55ssIU7GXV9vL2bVgmdCUfbd0zhEWRYtF1fIJa_P34oEH8HVCgRtNY3GLWcIgRP1lO0kocw3d7cCCfJYKu980fDypjkFzkHzqrB4amtUEsglZvsGvzYzoDZyioKwM9H2EUg0PFXBSWFJ1WyLLQNoQey-Q6kSGklw
-松阳综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8?zzhed;http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8zzhed
 松阳综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8?fbl=
 松阳新闻综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8
 松阳新闻综合,http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8?fbl=
@@ -2044,7 +2041,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 开化国家公园,http://l.cztvcloud.com/channels/lantian/SXkaihua2/720p.m3u8
 开化国家公园,http://l.cztvcloud.com/channels/lantian/SXkaihua2/720p.m3u8?zzhed
 庆元综合,http://hls.quklive.com/live/play-sh-21.quklive.com/1723084230809265.m3u8?auth_key=2048470245-4efd9042b7a547588c22340ae9e59235-0-e5300c467f3d03ce5ed13e629b0e73d6&decode__1507=eqAh0IxGxmOGO7D%2FKW0%3DXy72iDCWzAeD
-庆元综合,http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8?zzhed[浙江]洞头综合频道
 庆元综合,http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8?fbl=
 庆元新闻综合,http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8
 平湖民生休闲,http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8?zzhed
@@ -4001,11 +3997,11 @@ ELTA娱乐,http://push-rtmp-hs-spe-f5.douyincdn.com/live/awei_aedyl.flv
 中天亚洲,http://47.91.17.126:20002/Smartv.php?id=ctiasia_twn
 中天亚洲,http://api.mytv666.top/api/hkhk.php?id=6230353962323532613838363830373564306164326137336138366430623435267469643d77696e74763132332669643d3738&auth=123
 中天亚洲,http://api.mytv666.top/api/hkhk.php?id=3962383334666661326334396461326537383063663333666566333830363536267469643d74762669643d313030&auth=123
-中天亚洲,https://live.catvod.com/catvod_com.php?id=ctiasia_twn&token=ce29fc1486a0d709ec3b4d29db029bccc03fc82ff61e4e0fadaa3892536e2831%3A1756548610
 中天亚洲,https://live.catvod.com/catvod_com.php?id=ctiasia_twn&token=1bc91e754ba8757da5795e597a1836b3241ab841b6d205fc72c762d23c6c99ad%3A1756591775
 中天亚洲,http://line.greatstar.me:80/play/live.php?mac=00:1A:79:13:54:E8&stream=571212&extension=ts
 中天亚洲,https://iptv.catvod.com/catvod_com.php?id=ctiasia_twn&token=a153e2cc5948bdd1651a4f43726d32642085646a29587610a5b603a23ec5de3c%3A1757558622
 中天亚洲,http://t.061899.xyz/tl/js/js.php?id=ztyzt
+中天亚洲,https://iptv.catvod.com/catvod_com.php?id=ctiasia_twn&token=f914515f31c75d3907cabe9bdb7a7c416a5672801310bcd58e775c5519a1ddc7%3A1757903922
 有线18,http://push-rtmp-hs-spe-f5.douyincdn.com/live/xiangjiaogemytv0318.flv
 广电翡翠,http://push-rtmp-hs-spe-f5.douyincdn.com/live/xiangjiaoge15131132145.flv
 tvbplus,http://push-rtmp-hs-spe-f5.douyincdn.com/live/xaigjiaogetvbplus01.flv
@@ -4511,7 +4507,6 @@ TVBS NEWS,http://61.221.215.25:8800/hls/9/index.m3u8
 东森新闻台,http://api.mytv666.top/api/hkhk.php?id=6666323035643663343766316231356134636232653135646535333232336166267469643d77696e74763132332669643d3434&auth=123
 东森新闻台,http://api.mytv666.top/api/hkhk.php?id=3534346532363736323231376661333239383839363464666132363138313131267469643d74762669643d313037&auth=123
 东森幼幼,http://50.7.234.10:8278/yoyo_twn/playlist.m3u8?ct=17874&tid=m84c9b210bc7f11269156&tsum=51340c8fb7ca02ab978ee0791843501d
-番薯111,http://61.216.67.119:1935/TWHG/E1/chunklist_w705811302.m3u8
 番薯111,http://61.216.67.119:1935/TWHG/E1/chunklist_w70581102.m3u8
 番薯111,http://61.216.67.119:1935/TWHG/E1/chunklistw70581102.m3u8
 番薯111,http://61.216.67.119:1935/TWHG/E1/playlist.m3u8
