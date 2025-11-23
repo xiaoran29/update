@@ -1,5 +1,5 @@
 🕘️更新时间,#genre#
-2025-11-23 04:58:45,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
+2025-11-24 04:58:44,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
 
 🌐央视频道,#genre#
 CCTV1,http://112.132.10.54:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
@@ -1460,7 +1460,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 杭州余杭平安,http://l.cztvcloud.com/channels/lantian/SXyuhang2/720p.m3u8
 杭州余杭未来,http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8
 广东：经济科教,https://p2.vzan.com/slowlive/677282322271134305/live.m3u8
-广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=a484293b0e6036fb053179bdffaf7127&txTime=18e0d9e3c22
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=870cb528156f761b62bf8b8a7eec176a&txTime=18f4b58d76a
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=ae488fe9d79a8f3de023521ce7ce0766&txTime=18f2ea2cacf
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=8554699d06aed3f21425480824c75408&txTime=19095f3cb9c
@@ -1475,6 +1474,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 广州综合,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8
 广州综合,http://dns.yiandrive.com:13571/gztv/zhonghe
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=dce137597806f62ae6fdfc40328a336e&txTime=191b5fc1c86
+广州综合,https://tencentplaygsm.gztv.com/live/zonghes.m3u8
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=49c8041461997c7a97dbcc3c7fd11b4f&txTime=18d00acf487
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=9be68e7c35579d02d11f6968531343ea&txTime=1903ea2dd6a
 广州竞赛,https://tencentplay.gztv.com/live/jingsai.m3u8?txSecret=d295a772fb08e03b40f412ee48e70fb0&txTime=18d048582e3
@@ -1748,7 +1748,6 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 大湾区卫视,http://www.kaniptv.cn/zy/cd.php?id=1197
 大湾区卫视,http://mg.hmysapp.cn:177/ckmg/zb.php?id=dwqws
 大湾区卫视,http://www.dsk.cc/gdtv/gdtv.php?id=dwqws
-广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=a484293b0e6036fb053179bdffaf7127&txTime=18e0d9e3c22
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=870cb528156f761b62bf8b8a7eec176a&txTime=18f4b58d76a
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=ae488fe9d79a8f3de023521ce7ce0766&txTime=18f2ea2cacf
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=8554699d06aed3f21425480824c75408&txTime=19095f3cb9c
@@ -1763,6 +1762,7 @@ CGTN阿拉伯语,http://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ22080
 广州综合,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8
 广州综合,http://dns.yiandrive.com:13571/gztv/zhonghe
 广州综合,https://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=dce137597806f62ae6fdfc40328a336e&txTime=191b5fc1c86
+广州综合,https://tencentplaygsm.gztv.com/live/zonghes.m3u8
 广州影视,https://tencentplay.gztv.com/live/yingshi.m3u8?txSecret=7e9bddad7c8911626ed1d2c09fc605d9&txTime=18d00acf487
 广州影视,http://120.77.205.62:8087/rtp/239.253.43.68:5146
 广州影视,https://tencentplay.gztv.com/live/yingshi.m3u8?txSecret=ec79a0d817981989c161f548c48c2954&txTime=1903e79e680
