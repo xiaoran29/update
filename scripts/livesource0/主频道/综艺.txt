@@ -1,0 +1,201 @@
+综艺/娱乐/戏剧/影视类（去重排序，按类型归类）
+ 
+一、综艺频道/栏目（去重）
+ 
+民视综艺台
+八大综艺台
+民视综艺
+TVBS综艺
+八大综艺
+智勇闯关
+金牌综艺
+超级综艺
+爆笑综艺
+粤语综艺
+最强综艺趴
+🎭综艺频道
+湖南娱乐
+江苏综艺
+广东综艺
+浙江民生休闲
+浙江娱乐
+湖州娱乐
+哈尔滨娱乐
+中天娱乐
+八大娱乐
+三立都会
+三立综合
+东森综合
+纬来综合
+纬来精彩
+纬来育乐
+华艺中文 *wj
+华艺综 *lv
+华视
+TVB娱乐新闻
+TVB Plus
+TVB翡翠
+TVB星河
+TVB Classic
+TVB Entertainment
+TVB Asia
+VIUTV
+VIUTV *wj
+VIUTV 6
+VIUTVSIX
+VIUTVSIX *lv
+VIUTVSIX *wj
+Now星影
+Now爆谷
+HBO Comedy
+HBO Comedy *m
+HBO Comedy ==
+HBO Comedy ===
+Comedy Central
+Comedy Central *m
+Comedy Central Animation
+Comedy Central Pluto TV
+Comedy Central South Park
+Comedy TV
+Comedy Central Latino
+Pluto TV Comedy Central Latino
+Sky Comedy
+Sky Comedy=
+Sky Comedy ==
+Sky Max
+Sky Max *m
+ 
+二、影视/戏剧频道（去重）
+ 
+龙华偶像剧
+龙华偶像
+龙华戏剧
+八大戏剧
+三立戏剧
+东森戏剧
+纬来戏剧
+纬来日本
+公视
+公视台语
+民视
+番薯111
+FX
+FX ==
+FXX
+CA FXX
+US FXX
+FXM
+FXM ==
+FXM ===
+TNT
+TNT =
+TNT ==
+TBS
+TCM
+Warner TV
+Warner TV *lv
+AXN
+AXN *wj
+Sony Channel
+Sony One Classics
+Sony Pal
+Fox
+Fox 5 New York NY
+Fox 11 Los Angeles CA
+ABC
+ABC 7 Los Angeles CA (KABC-TV)
+湖南卫视
+湖南电视剧
+湖南电影
+金鹰纪实
+CCTV3
+CCTV8
+CCTV娱乐
+经典动画大集合
+新动力量创一流
+公视
+民视
+华视
+纬来综合
+纬来育乐
+三立都会
+东森综合
+中天娱乐
+八大娱乐
+TVBS综艺
+民视综艺台
+八大综艺台
+江苏综艺
+广东综艺
+浙江娱乐
+湖州娱乐
+哈尔滨娱乐
+ 
+三、港台及境外影视综艺频道（去重）
+ 
+VIUTV
+VIUTV 6
+VIUTVSIX
+VIUTVSIX *lv
+VIUTVSIX *wj
+Now星影
+Now爆谷
+TVB Plus
+TVB翡翠
+TVB星河
+TVB Classic
+TVB Entertainment
+TVB Asia
+TVB娱乐新闻
+华艺中文 *wj
+华艺综 *lv
+公视台语
+番薯111
+三立综合
+三立都会
+东森综合
+纬来综合
+纬来精彩
+纬来育乐
+纬来戏剧
+纬来日本
+龙华戏剧
+八大戏剧
+三立戏剧
+东森戏剧
+民视
+华视
+AXN
+AXN *wj
+Sony Channel
+Sony One Classics
+Sony Pal
+Warner TV
+HBO Comedy
+Comedy Central
+Sky Comedy
+Sky Max
+FX
+FXX
+FXM
+TNT
+TBS
+TCM
+Fox
+ABC
+
+# 成人/特殊兴趣频道（去重排序）
+ 
+Alba XXX 1
+Dorcel (法国)
+ช่อง dorcel orig
+ช่อง dorcel tv
+ช่อง dorcel club
+ช่อง exxxotica
+ช่อง naughty america
+ช่อง private
+ช่อง private tv
+ช่อง playboy plus
+ช่อง lust cinema
+ช่อง balkan erotic
+ช่อง french lover

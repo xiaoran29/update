@@ -1,0 +1,192 @@
+央视及国内教育文化类（去重排序）
+ 
+CCTV9（纪录）
+CCTV10（科教）
+CCTV11（戏曲）
+CCTV12（社会与法）
+CCTV少儿
+CCTV音乐
+CCTV戏曲
+CCTV纪录
+CCTV科教
+CCTV文化
+CCTV社会与法
+CCTV军事农业
+CCTV西班牙语
+CCTV法语
+CCTV阿拉伯语
+CCTV俄语
+央视文化精品
+中国教育1（CETV1）
+中国教育2（CETV2）
+中国教育4（CETV4）
+早期教育
+文物宝库
+金色学堂
+国学频道
+ 
+国际纪录/历史类（去重排序）
+ 
+CGTN Documentary
+CGTN外语纪录
+Documentary Plus
+History
+History 2 *m
+History Hit
+History Hit Channel
+History Hunters
+History TV18
+History UHD *m
+History(USA) *s
+History(USA) ==
+History(USA) ===
+US History
+PBS History
+Pluto TV History
+Beyond History
+Discovery Channel
+Discovery Channel *m
+Discovery *m
+Discovery(TW) *s
+Discovery Asia
+Discovery Asia *tt
+Asharq Discovery
+Discovery Science
+Discovery Science *m
+Discovery Turbo
+Discovery World Tamil
+Discovery Kids
+Discovery Kids Tamil
+Discovery Family
+Discovery Family *m
+Discovery Life
+Discovery Life *m
+Discovery Life =
+Discovery Life ==
+Discovery History
+Discovery History *m
+National Geographic
+National Geographic *m
+National Geographic =
+National Geographic ==
+National Geographic East
+National Geographic US Eastern
+National Geographic-
+National Geographic--
+National Geographics
+US National Geographic
+Nat Geo *m
+Nat Geo UHD *m
+National Geographic Wild
+National Geographic Wild *m
+National Geographic Wild East
+Nat Geo Wild
+Nat Geo Wild *m
+Nat Geo Wild =
+Nat Geo Wild UHD *m
+NatGeo Wild
+NatGeo Wild Tamil
+Animal Planet
+Animal Planet *m
+Animal Planet *wj
+Animal Planet =
+Animal Planet ==
+Smithsonian Channel
+Smithsonian Channel =
+Smithsonian Channel ==
+Smithsonian Channel East
+Smithsonian Channel Selects
+CA Smithsonian Channel
+Science Channel
+Sciences et Vie
+BBC Earth
+BBC Earth *wj
+BBC Earth US
+ช่อง BBC Earth
+BBC Travel
+BBC Knowledge
+PBS
+PBS KET World (480p)
+ARTE Network
+RT Doc
+RT Documentary
+RT-Doc
+DW Documentary
+DW Knowledge
+ 
+旅游/自然/生活类（去重排序）
+ 
+Love Nature
+Love Nature *wj
+Love Nature UHD *m
+Wild Earth
+Wildearth
+Wild Earth *y
+Wild Nature
+Nature Time France
+Xplore Channel
+Travel XP
+Travel XP *y
+TravelXP France
+Intravel
+Travel Plus
+Urban Travel
+4K Travel
+ช่อง Travel TV
+Global Trekker
+Global Trekker *wj
+Nautical Channel
+Outdoor Channel
+Outdoor Channel *tt
+Outdoor Channel *m
+Outdoor Channel =
+Outdoor Channel ==
+ช่อง Outdoor Channel
+Inside Outside
+Horse and Country
+Horse and Country Free
+The Design Network
+The Design Network (1080p)
+Waterbear
+Insight TV
+Urban Docs
+ 
+国际综合/文化类（去重排序）
+ 
+Arirang TV
+Arirang TV UN
+Arirang World
+Arirang *wj
+Arirang K-Pop
+NHK World
+NHK World-Japan
+TV Cultura
+TV Perú Internacional
+TV Galicia
+TV Zoom
+RTHK 31
+RTHK 31 *wj
+RTHK 32
+RTHK 32 *wj
+RTHK 33
+RTHK 34
+RTHK 35
+RTP Noticias
+Canal Savoir
+Canal E
+Canal IPE ᴴᴰ
+Canal Rural
+Canal 14 Israel
+Canal Orbe 21
+Canal Claro
+Canal Multivision
+Canal Málaga
+Canal Terrassa
+Canal Motor
+TV5 Monde Info
+TV5 Kannada
+Canal 56
+RTV Canal 57
+CFM TV Channel 98 (360p)
+TV 100
+TV1000

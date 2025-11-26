@@ -1,11 +1,11 @@
-name: Live Source Processing Script3
+name: Live Source3 Processing Script
 
 on:
   push:
     branches: [ main, master ]
   schedule:
     # 每天运行两次（UTC时间 对应北京时间 6:00 和 18:00）
-    - cron: '0 3,15 * * *'
+    - cron: '0 9,21 * * *'
   workflow_dispatch:
 
 jobs:
@@ -40,10 +40,10 @@ jobs:
     - name: Check generated files
       run: |
         echo "📁 生成的直播源文件:"
-        ls -la output/livesource3/
+        ls -la output/
         echo ""
         echo "📊 文件详情:"
-        for file in output/livesource3/*.txt output/livesource3/*.m3u; do
+        for file in output/*.txt output/*.m3u; do
           if [ -f "$file" ]; then
             lines=$(wc -l < "$file" 2>/dev/null || echo "0")
             size=$(du -h "$file" | cut -f1)
@@ -59,7 +59,7 @@ jobs:
     - name: Check for changes
       id: check-changes
       run: |
-        git add output/livesource3/
+        git add output/
         if git diff --staged --quiet; then
           echo "changes=false" >> $GITHUB_OUTPUT
           echo "📭 没有检测到新的直播源变化"
@@ -75,7 +75,7 @@ jobs:
     - name: Commit and push changes
       if: steps.check-changes.outputs.changes == 'true'
       run: |
-        git add output/livesource3/
+        git add output/
         git commit -m "🤖 $(TZ='Asia/Shanghai' date +%Y-%m-%d\ %H:%M:%S)"
         
         # 重试机制
@@ -95,7 +95,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: live-sources
-        path: output/livesource3/
+        path: output/
         retention-days: 5
 
     - name: Success notification
@@ -103,7 +103,7 @@ jobs:
       run: |
         echo "🎉 直播源生成和部署完成！"
         echo "⏰ 更新时间: $(TZ='Asia/Shanghai' date +%Y-%m-%d\ %H:%M:%S)"
-        echo "📁 输出文件已保存至: output/livesource3/"
+        echo "📁 输出文件已保存至: output/"
         if [ "${{ steps.check-changes.outputs.changes }}" == "true" ]; then
           echo "🔄 已自动提交更改到仓库"
         else

@@ -1,0 +1,847 @@
+# 地方新闻/综合台（去重排序）
+ 
+白城新闻综合
+白山新闻综合
+保定新闻综合
+北京新闻
+北京新闻综合
+成都公共
+成都都市
+成都经济
+成都简阳新闻综合
+成都新闻
+成都影视
+承德新闻综合
+常德综合
+常德新闻综合
+长治新闻综合
+潮州综合
+池州新闻综合
+楚雄新闻综合
+大理新闻综合
+大连新闻综合
+丹东新闻综合
+东莞新闻综合
+东莞综合
+峨眉山综合
+福鼎新闻综合
+封丘新闻综合
+巩义新闻综合
+固始新闻综合
+固安新闻综合
+广安新闻综合
+贵港新闻综合
+桂林新闻综合
+哈尔滨新闻
+哈尔滨新闻综合
+海口新闻综合
+邯郸新闻综合
+汉中新闻综合
+鹤壁新闻综合
+红河新闻综合
+衡水新闻综合
+怀化新闻综合
+淮南新闻综合
+淮北经济生活
+黄冈新闻综合
+黄石新闻综合
+惠州新闻综合
+吉安新闻综合
+佳木斯新闻综合
+江门新闻综合
+江阴新闻综合
+晋江新闻综合
+晋中新闻综合
+荆州新闻综合
+晋城公共
+晋城新闻
+阿坝新闻综合
+阿拉善新闻综合
+阿勒泰新闻综合
+安康新闻综合
+安庆新闻综合
+鞍山新闻综合
+安顺新闻综合
+安阳新闻综合
+巴彦淖尔新闻综合
+巴中新闻综合
+白城新闻综合
+白山新闻综合
+百色新闻综合
+蚌埠新闻综合
+包头新闻综合
+宝鸡新闻综合
+保定新闻综合
+保山新闻综合
+北海新闻综合
+北京新闻
+北京新闻综合
+本溪新闻综合
+毕节新闻综合
+滨州新闻综合
+博尔塔拉新闻综合
+沧州新闻综合
+昌都新闻综合
+昌吉新闻综合
+长春新闻综合
+长沙新闻综合
+郴州新闻综合
+潮州综合
+承德新闻综合
+成都公共
+成都都市
+成都经济
+成都简阳新闻综合
+成都新闻
+成都影视
+成都新闻综合
+池州新闻综合
+赤峰新闻综合
+滁州新闻综合
+楚雄新闻综合
+达州新闻综合
+大理新闻综合
+大连新闻综合
+大庆新闻综合
+大同新闻综合
+丹东新闻综合
+德阳新闻综合
+定西新闻综合
+东莞新闻综合
+东莞综合
+东营新闻综合
+鄂尔多斯新闻综合
+恩施新闻综合
+防城港新闻综合
+佛山新闻综合
+福州新闻综合
+抚顺新闻综合
+阜新新闻综合
+阜阳新闻综合
+甘孜新闻综合
+赣州新闻综合
+固原新闻综合
+广安新闻综合
+广元新闻综合
+广州新闻综合
+贵港新闻综合
+贵阳新闻综合
+桂林新闻综合
+哈密新闻综合
+海口新闻综合
+海东新闻综合
+海北新闻综合
+海南新闻综合
+海西新闻综合
+邯郸新闻综合
+汉中新闻综合
+鹤壁新闻综合
+河池新闻综合
+河源新闻综合
+贺州新闻综合
+衡水新闻综合
+衡阳新闻综合
+怀化新闻综合
+淮南新闻综合
+淮北经济生活
+淮北新闻综合
+黄冈新闻综合
+黄石新闻综合
+惠州新闻综合
+鸡西新闻综合
+吉安新闻综合
+佳木斯新闻综合
+嘉兴新闻综合
+嘉峪关新闻综合
+江门新闻综合
+江阴新闻综合
+阳江新闻综合
+揭阳新闻综合
+吉林市新闻综合
+济南新闻综合
+济宁新闻综合
+晋中新闻综合
+晋城公共
+晋城新闻
+锦州新闻综合
+金昌新闻综合
+金华新闻综合
+荆门新闻综合
+荆州新闻综合
+景德镇新闻综合
+酒泉新闻综合
+喀什新闻综合
+开封新闻综合
+克拉玛依新闻综合
+昆明新闻综合
+昆山新闻综合
+拉萨新闻综合
+兰州新闻综合
+廊坊新闻综合
+连云港新闻综合
+聊城新闻综合
+林芝新闻综合
+临沂新闻综合
+柳州新闻综合
+六安新闻综合
+六盘水新闻综合
+龙岩新闻综合
+陇南新闻综合
+娄底新闻综合
+泸州新闻综合
+洛阳新闻综合
+马鞍山新闻综合
+茂名新闻综合
+眉山新闻综合
+梅州新闻综合
+绵阳新闻综合
+牡丹江新闻综合
+那曲新闻综合
+南充新闻综合
+南阳新闻综合
+南平新闻综合
+南通新闻综合
+宁德新闻综合
+宁波新闻综合
+内江新闻综合
+怒江新闻综合
+攀枝花新闻综合
+盘锦新闻综合
+平顶山新闻综合
+平凉新闻综合
+萍乡新闻综合
+莆田新闻综合
+七台河新闻综合
+齐齐哈尔新闻综合
+秦皇岛新闻综合
+钦州新闻综合
+青岛新闻综合
+清远新闻综合
+庆阳新闻综合
+曲靖新闻综合
+衢州新闻综合
+泉州新闻综合
+日喀则新闻综合
+日照新闻综合
+三亚新闻综合
+三明新闻综合
+三沙新闻综合
+山南新闻综合
+汕头新闻综合
+汕尾新闻综合
+商洛新闻综合
+商丘新闻综合
+上海新闻综合
+上饶新闻综合
+绍兴新闻综合
+邵阳新闻综合
+韶关新闻综合
+深圳新闻综合
+沈阳新闻综合
+十堰新闻综合
+石河子新闻综合
+石嘴山新闻综合
+双鸭山新闻综合
+朔州新闻综合
+四平新闻综合
+松原新闻综合
+苏州新闻综合
+宿迁新闻综合
+宿州新闻综合
+随州新闻综合
+塔城新闻综合
+台州新闻综合
+泰安新闻综合
+唐山新闻综合
+天津新闻综合
+天水新闻综合
+铁岭新闻综合
+铜川新闻综合
+通化新闻综合
+通辽新闻综合
+铜陵新闻综合
+吐鲁番新闻综合
+图木舒克新闻综合
+铜仁新闻综合
+万宁新闻综合
+万州新闻综合
+威海新闻综合
+潍坊新闻综合
+渭南新闻综合
+温州新闻综合
+文山新闻综合
+乌海新闻综合
+乌兰察布新闻综合
+无锡新闻综合
+芜湖新闻综合
+吴忠新闻综合
+梧州新闻综合
+五指山新闻综合
+武威新闻综合
+西安新闻综合
+西宁新闻综合
+锡林郭勒新闻综合
+厦门新闻综合
+湘潭新闻综合
+湘西新闻综合
+襄阳新闻综合
+孝感新闻综合
+忻州新闻综合
+新乡新闻综合
+新余新闻综合
+信阳新闻综合
+邢台新闻综合
+徐州新闻综合
+许昌新闻综合
+宣城新闻综合
+雅安新闻综合
+延安新闻综合
+盐城新闻综合
+扬州新闻综合
+阳江新闻综合
+阳泉新闻综合
+伊春新闻综合
+伊犁新闻综合
+宜宾新闻综合
+宜昌新闻综合
+宜春新闻综合
+营口新闻综合
+益阳新闻综合
+永州新闻综合
+榆林新闻综合
+玉林新闻综合
+玉溪新闻综合
+岳阳新闻综合
+云浮新闻综合
+运城新闻综合
+枣庄新闻综合
+湛江新闻综合
+漳州新闻综合
+张掖新闻综合
+张家口新闻综合
+张家界新闻综合
+肇庆新闻综合
+昭通新闻综合
+郑州新闻综合
+镇江新闻综合
+湛江综合
+中山综合
+舟山新闻综合
+周口新闻综合
+株洲新闻综合
+珠海新闻综合
+驻马店新闻综合
+资阳新闻综合
+自贡新闻综合
+遵义新闻综合
+ 
+# 测试/信号频道
+ 
+Kanal 0
+Bi 1! Kanal
+Kanal 15
+Test Channel 1
+Test Channel 2
+Test Channel 3
+Color Bars
+Test Pattern
+Slate
+Black Screen
+White Screen
+Gray Screen
+Red Screen
+Green Screen
+Blue Screen
+Cyan Screen
+Magenta Screen
+Yellow Screen
+Test Tone
+Silence
+Static
+Snow
+No Signal
+Technical Difficulties
+Please Stand By
+We'll Be Right Back
+Programming Will Continue Shortly
+Temporary Service Interruption
+Channel Off Air
+Service Not Available
+Subscription Required
+Authorization Failed
+Decryption Error
+Signal Lost
+Weak Signal
+No Cable Connected
+Check Connection
+Retrieving Data
+Loading
+Buffering
+Please Wait
+Processing
+Updating
+Scanning
+Searching
+Connecting
+Authenticating
+Verifying
+Validating
+Initializing
+Starting
+Ready
+Standby
+ 
+四、功能/模式类（去重排序）
+ 
+Active Mode
+Inactive Mode
+Disabled Mode
+Enabled Mode
+On
+Off
+Yes
+No
+True
+False
+OK
+Cancel
+Apply
+Save
+Delete
+Edit
+Add
+Remove
+Create
+Destroy
+Build
+Break
+Fix
+Repair
+Maintain
+Service
+Support
+Help
+Info
+About
+Settings
+Options
+Preferences
+Configuration
+Setup
+Install
+Uninstall
+Update
+Upgrade
+Downgrade
+Rollback
+Backup
+Restore
+Reset
+Reboot
+Restart
+Shutdown
+Power On
+Power Off
+Standby Mode
+Sleep Mode
+Hibernate Mode
+Passive Mode
+Manual Mode
+Automatic Mode
+Semi-Automatic Mode
+Full Automatic Mode
+Custom Mode
+Default Mode
+Standard Mode
+Advanced Mode
+Expert Mode
+Beginner Mode
+Intermediate Mode
+Professional Mode
+Amateur Mode
+Novice Mode
+Veteran Mode
+Master Mode
+Apprentice Mode
+Student Mode
+Teacher Mode
+Instructor Mode
+Trainer Mode
+Coach Mode
+Mentor Mode
+Advisor Mode
+Consultant Mode
+Specialist Mode
+Generalist Mode
+Universal Mode
+Specific Mode
+General Mode
+Particular Mode
+Special Mode
+Regular Mode
+Irregular Mode
+Normal Mode
+Abnormal Mode
+Typical Mode
+Atypical Mode
+Common Mode
+Uncommon Mode
+Rare Mode
+Frequent Mode
+Infrequent Mode
+Occasional Mode
+Periodic Mode
+Sporadic Mode
+Random Mode
+Systematic Mode
+Methodical Mode
+Organized Mode
+Disorganized Mode
+Structured Mode
+Unstructured Mode
+Formal Mode
+Informal Mode
+Official Mode
+Unofficial Mode
+Authorized Mode
+Unauthorized Mode
+Legal Mode
+Illegal Mode
+Legitimate Mode
+Illegitimate Mode
+Valid Mode
+Invalid Mode
+Verified Mode
+Unverified Mode
+Confirmed Mode
+Unconfirmed Mode
+Approved Mode
+Disapproved Mode
+Accepted Mode
+Rejected Mode
+Welcome Mode
+Unwelcome Mode
+Invited Mode
+Uninvited Mode
+Requested Mode
+Unrequested Mode
+Expected Mode
+Unexpected Mode
+Anticipated Mode
+Unanticipated Mode
+Predicted Mode
+Unpredicted Mode
+Foreseen Mode
+Unforeseen Mode
+Planned Mode
+Unplanned Mode
+Scheduled Mode
+Unscheduled Mode
+Prepared Mode
+Unprepared Mode
+Unready Mode
+Set Mode
+Unset Mode
+Fixed Mode
+Unfixed Mode
+Stable Mode
+Unstable Mode
+Steady Mode
+Unsteady Mode
+Constant Mode
+Variable Mode
+Changing Mode
+Unchanging Mode
+Static Mode
+Dynamic Mode
+Moving Mode
+Stationary Mode
+Interactive Mode
+Non-interactive Mode
+Responsive Mode
+Unresponsive Mode
+Sensitive Mode
+Insensitive Mode
+Reactive Mode
+Unreactive Mode
+Proactive Mode
+Initiative Mode
+Spontaneous Mode
+Deliberate Mode
+Accidental Mode
+Intentional Mode
+Unintentional Mode
+Purposeful Mode
+Aimless Mode
+Directed Mode
+Undirected Mode
+Guided Mode
+Unguided Mode
+Led Mode
+Unled Mode
+Driven Mode
+Undriven Mode
+Powered Mode
+Unpowered Mode
+Energized Mode
+De-energized Mode
+Activated Mode
+Deactivated Mode
+Start Mode
+Stop Mode
+Begin Mode
+End Mode
+Commence Mode
+Cease Mode
+Initiate Mode
+Terminate Mode
+Demolish Mode
+Construct Mode
+Destruct Mode
+Make Mode
+Form Mode
+Deform Mode
+Shape Mode
+Mishape Mode
+Mold Mode
+Unmold Mode
+Cast Mode
+Recast Mode
+Forge Mode
+Unforge Mode
+Craft Mode
+Uncraft Mode
+Design Mode
+Undesign Mode
+Plan Mode
+Unplan Mode
+Scheme Mode
+Unscheme Mode
+Plot Mode
+Unplot Mode
+Chart Mode
+Unchart Mode
+Map Mode
+Unmap Mode
+Graph Mode
+Ungraph Mode
+Draw Mode
+Undraw Mode
+Paint Mode
+Unpaint Mode
+Color Mode
+Decolor Mode
+Tint Mode
+Untint Mode
+Shade Mode
+Unshade Mode
+Tone Mode
+Untone Mode
+Hue Mode
+Unhue Mode
+Saturation Mode
+Desaturation Mode
+Brightness Mode
+Darkness Mode
+Light Mode
+Dark Mode
+White Mode
+Black Mode
+Gray Mode
+Colorful Mode
+Colorless Mode
+Vivid Mode
+Dull Mode
+Brilliant Mode
+Dim Mode
+Luminous Mode
+Non-luminous Mode
+Radiant Mode
+Non-radiant Mode
+Shining Mode
+Non-shining Mode
+Glowing Mode
+Non-glowing Mode
+Flashing Mode
+Non-flashing Mode
+Blinking Mode
+Non-blinking Mode
+Flickering Mode
+Non-flickering Mode
+Pulsating Mode
+Non-pulsating Mode
+Beating Mode
+Throbbing Mode
+Non-throbbing Mode
+Vibrating Mode
+Non-vibrating Mode
+Oscillating Mode
+Non-oscillating Mode
+Swinging Mode
+Non-swinging Mode
+Rocking Mode
+Non-rocking Mode
+Swaying Mode
+Non-swaying Mode
+Waving Mode
+Non-waving Mode
+Fluttering Mode
+Non-fluttering Mode
+Flapping Mode
+Non-flapping Mode
+Flailing Mode
+Non-flailing Mode
+Thrashing Mode
+Non-thrashing Mode
+Whipping Mode
+Non-whipping Mode
+Lashing Mode
+Non-lashing Mode
+Striking Mode
+Non-striking Mode
+Hitting Mode
+Non-hitting Mode
+Pounding Mode
+Non-pounding Mode
+Hammering Mode
+Non-hammering Mode
+Knocking Mode
+Non-knocking Mode
+Rapping Mode
+Non-rapping Mode
+Tapping Mode
+Non-tapping Mode
+Drumming Mode
+Non-drumming Mode
+Playing Mode
+Non-playing Mode
+Performing Mode
+Non-performing Mode
+Acting Mode
+Non-acting Mode
+Dancing Mode
+Non-dancing Mode
+Singing Mode
+Non-singing Mode
+Music Mode
+Non-music Mode
+Sound Mode
+Silent Mode
+Noisy Mode
+Quiet Mode
+Loud Mode
+Soft Mode
+Harsh Mode
+Gentle Mode
+Rough Mode
+Smooth Mode
+Coarse Mode
+Fine Mode
+Gross Mode
+Net Mode
+Total Mode
+Partial Mode
+Full Mode
+Empty Mode
+Complete Mode
+Incomplete Mode
+Whole Mode
+Fractional Mode
+Entire Mode
+Maximum Mode
+Minimum Mode
+Optimal Mode
+Suboptimal Mode
+Best Mode
+Worst Mode
+Better Mode
+Worse Mode
+Good Mode
+Bad Mode
+Excellent Mode
+Poor Mode
+Superior Mode
+Inferior Mode
+Higher Mode
+Lower Mode
+Upper Mode
+Top Mode
+Bottom Mode
+Peak Mode
+Valley Mode
+Summit Mode
+Base Mode
+Apex Mode
+Nadir Mode
+Zenith Mode
+Depth Mode
+Height Mode
+Width Mode
+Length Mode
+Size Mode
+Scale Mode
+Proportion Mode
+Ratio Mode
+Rate Mode
+Speed Mode
+Velocity Mode
+Acceleration Mode
+Deceleration Mode
+Momentum Mode
+Force Mode
+Power Mode
+Energy Mode
+Work Mode
+Heat Mode
+Cold Mode
+Hot Mode
+Warm Mode
+Cool Mode
+Temperature Mode
+Pressure Mode
+Density Mode
+Mass Mode
+Weight Mode
+Volume Mode
+Area Mode
+Perimeter Mode
+Circumference Mode
+Diameter Mode
+Radius Mode
+Chord Mode
+Arc Mode
+Angle Mode
+Degree Mode
+Radian Mode
+Gradient Mode
+Slope Mode
+Incline Mode
+Decline Mode
+Ascent Mode
+Descent Mode
+Rise Mode
+Fall Mode
+Increase Mode
+Decrease Mode
+Growth Mode
+Decay Mode
+Expansion Mode
+Contraction Mode
+Inflation Mode
+Deflation Mode
+Swelling Mode
+Shrinking Mode
+Enlargement Mode
+Reduction Mode
+Magnification Mode
+Minification Mode
+Amplification Mode
+Attenuation Mode
+Boost Mode
+Cut Mode
+Enhance Mode
+Degrade Mode
+Improve Mode
+Worsen Mode
+
+ 

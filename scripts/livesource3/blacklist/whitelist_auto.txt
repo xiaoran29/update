@@ -1,5 +1,9 @@
 更新时间,#genre#
-20251118-14-58-41,url
+20251124-14-13-15,url
 
 
 RespoTime,whitelist,#genre#
+478.54ms,CCTV1,http://dayeyun-live21.cjyun.org/10102/s10102-TC1T.m3u8?auth_key=1767196799-ced13be0a8ae11efa7dfa7dfd677b8f3-0-c3d27fbc279c3efc9187853aca3da012
+480.41ms,CCTV1,http://dayeyun.live.tempsource.cjyun.org/videotmp/s10102-TC2T.m3u8
+185.51ms,CCTV2,https://stream1.freetv.fun/huang-shi-xin-wen-zong-he-1.m3u8
+190.53ms,CCTV2,https://huangshifb-live21.cjyun.org/10200/s10200-huangshitv01.m3u8?auth_key=1767196799-ced13be0a8ae11efa7dfa7dfd677b8f3-0-e22af05072c6fa8bc1fc35e042e97467
