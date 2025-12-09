@@ -1,0 +1,29 @@
+测试频道,#genre#
+1905电影网,http://xxwx.yoesun.com/xxw/1905电影网.php?id=1905
+重温经典频道,http://xxwx.yoesun.com/xxw/cwjd.php
+重温经典频道,http://8.138.7.223/tv/cwjd.php
+JJ斗地主,http://cz.crossec.com:35455/douyu/488743
+凤凰卫视中文台,https://cdn6.101.qzz.io/163189/fhzw
+凤凰卫视资讯台,https://cdn6.101.qzz.io/163189/fhzx
+星空卫视中文台,http://iot-mqqt.111yao.cn:8080/live/diyp_xingkong.m3u8
+New TV 睛彩青少,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000020000031315
+New TV 睛彩篮球,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000020000011529
+New TV 睛彩竞技,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000020000011528
+New TV 睛彩广场舞,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000020000011523
+凤凰卫视中文台,http://150.138.8.143/00/SNM/CHANNEL00000380/index.m3u8
+凤凰卫视香港台,https://cdn6.101.qzz.io/163189/fhhk
+苏州新闻,https://live-auth.51kandianshi.com/szgd/csztv1.m3u8
+苏州经济,https://live-auth.51kandianshi.com/szgd/csztv2.m3u8
+苏州文化,https://live-auth.51kandianshi.com/szgd/csztv3.m3u8
+苏州电影,https://live-auth.51kandianshi.com/szgd/csztv4.m3u8
+苏州生活,https://live-auth.51kandianshi.com/szgd/csztv5.m3u8
+浙江民生频道,https://ali-xwl.cztv.com/live/channel061080Plxw.m3u8
+浙江少儿频道,https://ali-xwl.cztv.com/live/channel081080Plxw.m3u8
+浙江钱江频道,https://ali-xwl.cztv.com/live/channel021080Plxw.m3u8
+浙江纪录频道,https://ali-xwl.cztv.com/live/channel121080Plxw.m3u8
+广州综合频道,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8
+广州新闻频道,http://tencentplay.gztv.com/live/xinwen.m3u8?txSecret=d2c2db0b598c02ec1b5623728434d367&txTime=18d57929bd3
+广州法治频道,http://tencentplay.gztv.com/live/fazhi.m3u8?txSecret=3e84cd8eba844b5dc2150612295c7a52&txTime=18d578f4493
+广州南国都市,http://tencentplay.gztv.com/live/nanguodushi.m3u8?txSecret=140110ae3d6c936a77f94c4f4d85b0d3&txTime=18d57929bd4
+香港环球卫视,rtmp://play.xghqws.cn/yunqing888/yunqing888?auth_key=1731294000-0-0-0942b140da60167a47c1f2d685f702b2
+ 
