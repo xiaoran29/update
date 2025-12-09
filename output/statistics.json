@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "version": "v0.03",
+    "start_time": "20251209 22:12:33",
+    "end_time": "20251209 22:13:34",
+    "duration_seconds": 61.442799,
+    "duration_formatted": "1分1秒"
+  },
+  "statistics": {
+    "processed_urls": 18148,
+    "blacklist_urls": 41587,
+    "total_processed_urls": 59735,
+    "duplicate_rate": 69.61915125136018,
+    "total_lines": 18356,
+    "other_lines": 7131
+  },
+  "category_counts": {
+    "央视": 1461,
+    "卫视": 2048,
+    "体育赛事": 11,
+    "其他": 7131
+  }
+}
