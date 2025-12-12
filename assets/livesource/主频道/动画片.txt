@@ -1,6 +1,5 @@
 海绵宝宝
 猫和老鼠
-
 Baby TV
 BabyFirst
 CN卡通
@@ -30,7 +29,6 @@ PBS Kids
 龙华卡通
 Momo亲子
 哆啦A梦
-猫和老鼠
 火影忍者
 航海王
 茶啊二中
@@ -47,6 +45,17 @@ Momo亲子
 炫动卡通
 CCTV14
 🐶动画片
+动画片频道
+Nickelodeon
+boomerang==
+cartoon networkm
+cartoon network uhdm
+disney==
+disney channel===
+disney channel
+momo亲子
+nickelodeon
+nicktoons
 Baby Shark TV
 Babyfirst
 Boomerang
@@ -62,42 +71,42 @@ Nicktoons
 Teen Nick
 baby first
 baby shark tv
-baby shark tv (720p)
-baby tv *wj
-boomerang (fr) *s
-boomerang *m
-boomerang ==
+baby shark tv(720p)
+baby tv*wj
+boomerang(fr) *s
+boomerang*m
+boomerang==
 ca cartoon network
 cartoon network
-cartoon network *m
-cartoon network *tt
-cartoon network =
-cartoon network ==
-cartoon network uhd *m
-cartoon netwrk *m
-cartoonito *m
-CARTOONITO *tt
-disney =
-disney ==
-disney channel ===
+cartoon network*m
+cartoon network*tt
+cartoon network=
+cartoon network==
+cartoon network uhd*m
+cartoon netwrk*m
+cartoonito*m
+CARTOONITO*tt
+disney=
+disney==
+disney channel===
 disney channel
 disney junior(asia)
 disney junior(asia)=
-disney junior(asia) ==
+disney junior(asia)==
 disney xd
-disney xd(mas) =
-disney xd(mas) ==
+disney xd(mas)=
+disney xd(mas)==
 momo亲子
 nick jr
 nick music
 nick nickelodeon
 nickelodeon
-nickelodeon *wj
-nickelodeon (uk) =
-nickelodeon (uk) ==
+nickelodeon*wj
+nickelodeon(uk) =
+nickelodeon(uk) ==
 nicktoons
-nicktoons cis =
-nicktoons cis ==
+nicktoons cis=
+nicktoons cis==
 pbs kids alaska
 pbs kids hawaii
 teen nick

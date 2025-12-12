@@ -1,3 +1,53 @@
+已从提供的分类数据中提取“音乐”相关频道如下：
+
+🎵 音乐频道
+
+· CrimeTV LIVE
+· 宝盒没宝
+· 经典老歌
+· 虚情的爱
+· 雷蒙影视直播
+· 音你而来诏安
+· mtv live
+· yo!mtv
+· vevo pop
+· vevo pop fast
+· vevo pop germany
+· vevo pop italy
+· vevo pop spain
+· ช่อง vevo pop
+· vevo latino
+· vevo hip-hop r b
+· vevo retro rock
+· vevo schlager pop
+· ช่อง vevo'70s
+· ช่อง vevo'80s
+· vevo'90s '00s italy
+· vevo 90s
+· ช่อง vevo'90s
+· ช่อง vevo 2k
+· music channel
+· california music channel usa
+· ช่อง california music channel
+· california music channel
+· music box brasil
+· music top
+· q-music
+· channel s music
+· trace urban
+· trace urbanⓖ
+· rotana music
+· sun music
+· ptc music
+· jordan songs
+· saga music
+· hits
+· hits(tw)=
+· bibel tv musik
+· radio norba tv
+· музыка 1 international
+· музыка 2 international
+
 🎧音乐频道
 🎤S H E《2014 世界巡回演唱会 台北站 完整版》
 🎤S H E《2018 十七周年台北演唱会 完整版》
@@ -2144,135 +2194,3 @@ DJ歌曲怎么爱都爱不够
 💃醉倾城
 💃BYD蹦野迪
 
-CCTV15
-CCTV风云音乐
-音乐频道
-CCTV音乐
-风云音乐
-MTV
-mtv music
-mtv (korea)=
-mtv 2=
-mtv classic
-mtv live
-mtv live *s
-mtv live =
-mtv live ==
-mtv live uhd *m
-yo! mtv
-MCM
-VH1
-us vh1
-Vevo Pop
-vevo pop
-vevo pop fast
-vevo pop germany
-vevo pop italy
-vevo pop spain
-ช่อง vevo pop
-Vevo Country
-vevo country
-ช่อง vevo country
-Vevo Latino
-vevo latino
-vevo latino (1080p)
-ช่อง vevo latino
-Vevo Hip-Hop R&B
-vevo hip-hop r b
-Vevo Retro Rock
-vevo retro rock
-vevo retro rock
-ช่อง vevo retro rock
-Vevo Schlager Pop
-vevo schlager pop
-Vevo True School Hip-Hop
-vevo true school hip-hop
-Vevo '70s
-vevo '70s
-vevo 70s
-ช่อง vevo '70s
-Vevo '80s
-vevo '80s
-ช่อง vevo '80s
-Vevo '90s
-vevo '90s
-vevo '90s '00s italy
-vevo 90s
-ช่อง vevo '90s
-Vevo 2K
-ช่อง vevo 2k
-Music TV
-music tv
-music tv *wj
-Much TV
-much tv
-Music Channel
-music channel
-California Music Channel
-california music channel usa
-ช่อง california music channel
-california music channel
-Music Box Brasil
-music box brasil
-Music Top
-music top
-Q-Music
-q-music
-Qmusic
-qmusic
-Deluxe Music
-deluxe music
-Channel S Music
-channel s music
-Trace Urban
-trace urban
-trace urban *y
-trace urban ⓖ
-Rotana Music
-rotana music
-Sun Music
-sun music
-Surya Music
-surya music
-7s Music
-7s music
-PTC Music
-ptc music
-Jordan Songs
-jordan songs
-Saga Music
-saga music
-Mastiii
-mastiii
-Mooz Hits
-mooz hits
-Hits
-hits
-hits(tw) =
-Hits Movie
-hits movie
-Biber TV
-Bibel TV Musik
-bibel tv musik
-Kral - Kral Pop
-kral - kral pop
-Radio Italia Trend
-radio italia trend
-Radio Norba TV
-radio norba tv
-Radio Radio TV
-radio radio tv
-Radio Roma Television
-radio roma television
-Óčko Star
-óčko star
-Музыка 1 International
-музыка 1 international
-Музыка 2 International
-музыка 2 international
-Муз-ТВ
-Радио Шансон
-радио шансон
-Шансон ТВ
-шансон тв
-星空音乐

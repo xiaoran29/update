@@ -1,917 +1,1523 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# ===== 直播源聚合处理工具 ======
-# ======== 版本v3.00 =========
-# ========= 重构版 ===========
+# ====== 直播源聚合处理工具 v3.00 ======
+# ======= LiveSource-Collector =======
+# ===========  重构版============
+# ======== 基于v2.00，重构版========
 
+# ========= 模块导入区 =========
 import urllib.request
 from urllib.parse import urlparse
-import re
+import re  # 正则
 import os
 from datetime import datetime, timedelta, timezone
 import random
-import opencc
+import opencc  # 简繁转换
 import socket
 import time
-import json
-from typing import Dict, List, Set, Optional, Any
 
-# ========= 常量定义 =========
-class Config:
-    """配置常量"""
-    OUTPUT_DIR = 'output'
-    ASSETS_DIR = 'assets/livesource'
-    BLACKLIST_DIR = f'{ASSETS_DIR}/blacklist'
-    MANUAL_DIR = f'{ASSETS_DIR}/手工区'
-    REGION_DIR = f'{ASSETS_DIR}/地方台'
-    MAIN_CHANNEL_DIR = f'{ASSETS_DIR}/主频道'
-    
-    URLS_FILE = f'{ASSETS_DIR}/urls-daily.txt'
-    CORRECTIONS_FILE = f'{ASSETS_DIR}/corrections_name.txt'
-    LOGO_FILE = f'{ASSETS_DIR}/logo.txt'
-    
-    # 输出文件
-    OUTPUT_FULL = f'{OUTPUT_DIR}/full.txt'
-    OUTPUT_LITE = f'{OUTPUT_DIR}/lite.txt'
-    OUTPUT_CUSTOM = f'{OUTPUT_DIR}/custom.txt'
-    OUTPUT_OTHERS = f'{OUTPUT_DIR}/others.txt'
-    
-    # 黑名单文件
-    BLACKLIST_AUTO = f'{BLACKLIST_DIR}/blacklist_auto.txt'
-    BLACKLIST_MANUAL = f'{BLACKLIST_DIR}/blacklist_manual.txt'
-    WHITELIST_AUTO = f'{BLACKLIST_DIR}/whitelist_auto.txt'
-    
-    # AKTV源
-    AKTV_URL = "https://raw.githubusercontent.com/xiaoran67/update/refs/heads/main/assets/livesource/%E6%89%8B%E5%B7%A5%E5%8C%BA/channels.txt"
-    AKTV_LOCAL = f'{MANUAL_DIR}/AKTV.txt'
+# ========= 初始化输出目录 =========
+os.makedirs('output', exist_ok=True)  # 创建输出目录，如果已存在则不会报错
+print("📁 创建输出目录: output")
 
 # ========= 频道分类配置 =========
-CHANNEL_CATEGORIES = {
-    'core': {
-        '央视': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/CCTV.txt', 'lines': []},
-        '卫视': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/卫视.txt', 'lines': []},
+# 基于v2.00的所有分类，重构的结构化配置方式
+CHANNEL_CONFIG = {
+    # 主频道
+    "yangshi": {
+        "file": "主频道/CCTV.txt",
+        "lines": [],
+        "match_type": "keyword",
+        "title": "🌐央视频道"
+    },
+    "weishi": {
+        "file": "主频道/卫视.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "📡卫视频道"
+    },
+    "digital": {
+        "file": "主频道/数字.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🔢数字频道"
+    },
+    "movie": {
+        "file": "主频道/电影.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎬电影频道"
+    },
+    "tv_drama": {
+        "file": "主频道/电视剧.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "📺电·视·剧"
+    },
+    "documentary": {
+        "file": "主频道/纪录片.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎥纪·录·片"
+    },
+    "cartoon": {
+        "file": "主频道/动画片.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐱动·画·片"
+    },
+    "radio": {
+        "file": "主频道/收音机.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "📻收·音·机"
+    },
+    "variety": {
+        "file": "主频道/综艺.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎭综艺频道"
+    },
+    "huya": {
+        "file": "主频道/虎牙.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐯虎牙直播"
+    },
+    "douyu": {
+        "file": "主频道/斗鱼.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐠斗鱼直播"
+    },
+    "commentary": {
+        "file": "主频道/解说.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎤解说频道"
+    },
+    "music": {
+        "file": "主频道/音乐.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎵音乐频道"
+    },
+    "food": {
+        "file": "主频道/美食.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🍜美食频道"
+    },
+    "travel": {
+        "file": "主频道/旅游.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "✈️旅游频道"
+    },
+    "health": {
+        "file": "主频道/健康.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏥健康频道"
+    },
+    "finance": {
+        "file": "主频道/财经.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "💰财经频道"
+    },
+    "shopping": {
+        "file": "主频道/购物.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🛍️购物频道"
+    },
+    "game": {
+        "file": "主频道/游戏.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎮游戏频道"
+    },
+    "news": {
+        "file": "主频道/新闻.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "📰新闻频道"
+    },
+    "china": {
+        "file": "主频道/中国.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🇨🇳中国综合"
+    },
+    "international": {
+        "file": "主频道/国际.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🌐国际频道"
+    },
+    "sports": {
+        "file": "主频道/体育.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏀体育频道"
+    },
+    "tyss": {
+        "file": "主频道/体育赛事.txt",
+        "lines": [],
+        "match_type": "keyword",
+        "title": "🏆️体育赛事"
+    },
+    "mgss": {
+        "file": "主频道/咪咕赛事.txt",
+        "lines": [],
+        "match_type": "keyword",
+        "title": "🏈咪咕赛事"
+    },
+    "traditional_opera": {
+        "file": "主频道/戏曲.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎭戏曲频道"
+    },
+    "spring_festival_gala": {
+        "file": "主频道/春晚.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🧨历届春晚"
+    },
+    "camera": {
+        "file": "主频道/直播中国.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏞️景区直播"
+    },
+    "favorite": {
+        "file": "主频道/收藏频道.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "⭐收藏频道"
     },
     
-    'regions': {
-        '北京': {'dict_file': f'{Config.REGION_DIR}/北京.txt', 'lines': []},
-        '上海': {'dict_file': f'{Config.REGION_DIR}/上海.txt', 'lines': []},
-        '广东': {'dict_file': f'{Config.REGION_DIR}/广东.txt', 'lines': []},
-        '江苏': {'dict_file': f'{Config.REGION_DIR}/江苏.txt', 'lines': []},
-        '浙江': {'dict_file': f'{Config.REGION_DIR}/浙江.txt', 'lines': []},
-        '山东': {'dict_file': f'{Config.REGION_DIR}/山东.txt', 'lines': []},
-        '四川': {'dict_file': f'{Config.REGION_DIR}/四川.txt', 'lines': []},
-        '河南': {'dict_file': f'{Config.REGION_DIR}/河南.txt', 'lines': []},
-        '湖南': {'dict_file': f'{Config.REGION_DIR}/湖南.txt', 'lines': []},
-        '重庆': {'dict_file': f'{Config.REGION_DIR}/重庆.txt', 'lines': []},
-        '天津': {'dict_file': f'{Config.REGION_DIR}/天津.txt', 'lines': []},
-        '湖北': {'dict_file': f'{Config.REGION_DIR}/湖北.txt', 'lines': []},
-        '安徽': {'dict_file': f'{Config.REGION_DIR}/安徽.txt', 'lines': []},
-        '福建': {'dict_file': f'{Config.REGION_DIR}/福建.txt', 'lines': []},
-        '辽宁': {'dict_file': f'{Config.REGION_DIR}/辽宁.txt', 'lines': []},
-        '陕西': {'dict_file': f'{Config.REGION_DIR}/陕西.txt', 'lines': []},
-        '河北': {'dict_file': f'{Config.REGION_DIR}/河北.txt', 'lines': []},
-        '江西': {'dict_file': f'{Config.REGION_DIR}/江西.txt', 'lines': []},
-        '广西': {'dict_file': f'{Config.REGION_DIR}/广西.txt', 'lines': []},
-        '云南': {'dict_file': f'{Config.REGION_DIR}/云南.txt', 'lines': []},
-        '山西': {'dict_file': f'{Config.REGION_DIR}/山西.txt', 'lines': []},
-        '黑龙江': {'dict_file': f'{Config.REGION_DIR}/黑龙江.txt', 'lines': []},
-        '吉林': {'dict_file': f'{Config.REGION_DIR}/吉林.txt', 'lines': []},
-        '贵州': {'dict_file': f'{Config.REGION_DIR}/贵州.txt', 'lines': []},
-        '甘肃': {'dict_file': f'{Config.REGION_DIR}/甘肃.txt', 'lines': []},
-        '内蒙古': {'dict_file': f'{Config.REGION_DIR}/内蒙.txt', 'lines': []},
-        '新疆': {'dict_file': f'{Config.REGION_DIR}/新疆.txt', 'lines': []},
-        '海南': {'dict_file': f'{Config.REGION_DIR}/海南.txt', 'lines': []},
-        '宁夏': {'dict_file': f'{Config.REGION_DIR}/宁夏.txt', 'lines': []},
-        '青海': {'dict_file': f'{Config.REGION_DIR}/青海.txt', 'lines': []},
-        '西藏': {'dict_file': f'{Config.REGION_DIR}/西藏.txt', 'lines': []},
+    # 地方台（省级）
+    "beijing": {
+        "file": "地方台/北京.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏛️北京频道"
+    },
+    "shanghai": {
+        "file": "地方台/上海.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏙️上海频道"
+    },
+    "guangdong": {
+        "file": "地方台/广东.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐯广东频道"
+    },
+    "jiangsu": {
+        "file": "地方台/江苏.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎐江苏频道"
+    },
+    "zhejiang": {
+        "file": "地方台/浙江.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🧵浙江频道"
+    },
+    "shandong": {
+        "file": "地方台/山东.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "⛰️山东频道"
+    },
+    "sichuan": {
+        "file": "地方台/四川.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐼四川频道"
+    },
+    "henan": {
+        "file": "地方台/河南.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐘河南频道"
+    },
+    "hunan": {
+        "file": "地方台/湖南.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🌶️湖南频道"
+    },
+    "chongqing": {
+        "file": "地方台/重庆.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏞️重庆频道"
+    },
+    "tianjin": {
+        "file": "地方台/天津.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🚢天津频道"
+    },
+    "hubei": {
+        "file": "地方台/湖北.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏯湖北频道"
+    },
+    "anhui": {
+        "file": "地方台/安徽.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🌾安徽频道"
+    },
+    "fujian": {
+        "file": "地方台/福建.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🌊福建频道"
+    },
+    "liaoning": {
+        "file": "地方台/辽宁.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "⛰️辽宁频道"
+    },
+    "shaanxi": {
+        "file": "地方台/陕西.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🔥陕西频道"
+    },
+    "hebei": {
+        "file": "地方台/河北.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "⛩️河北频道"
+    },
+    "jiangxi": {
+        "file": "地方台/江西.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🔥江西频道"
+    },
+    "guangxi": {
+        "file": "地方台/广西.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "💃广西频道"
+    },
+    "yunnan": {
+        "file": "地方台/云南.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "☁️云南频道"
+    },
+    "shanxi": {
+        "file": "地方台/山西.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏮山西频道"
+    },
+    "heilongjiang": {
+        "file": "地方台/黑龙江.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐻黑·龙·江"
+    },
+    "jilin": {
+        "file": "地方台/吉林.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🎎吉林频道"
+    },
+    "guizhou": {
+        "file": "地方台/贵州.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "⛰️贵州频道"
+    },
+    "gansu": {
+        "file": "地方台/甘肃.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐫甘肃频道"
+    },
+    "neimenggu": {
+        "file": "地方台/内蒙古.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐮内·蒙·古"
+    },
+    "xinjiang": {
+        "file": "地方台/新疆.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🍇新疆频道"
+    },
+    "hainan": {
+        "file": "地方台/海南.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🏝️海南频道"
+    },
+    "ningxia": {
+        "file": "地方台/宁夏.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🕌宁夏频道"
+    },
+    "qinghai": {
+        "file": "地方台/青海.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐑青海频道"
+    },
+    "xizang": {
+        "file": "地方台/西藏.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🐐西藏频道"
     },
     
-    'special_regions': {
-        '香港': {'dict_file': f'{Config.REGION_DIR}/香港.txt', 'lines': []},
-        '澳门': {'dict_file': f'{Config.REGION_DIR}/澳门.txt', 'lines': []},
-        '闽南': {'dict_file': f'{Config.REGION_DIR}/闽南.txt', 'lines': []},
+    # 港澳台
+    "hongkong": {
+        "file": "地方台/香港.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🇭🇰香港频道"
     },
-    
-    'content': {
-        '数字': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/数字.txt', 'lines': []},
-        '电影': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/电影.txt', 'lines': []},
-        '电视剧': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/电视剧.txt', 'lines': []},
-        '纪录片': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/纪录片.txt', 'lines': []},
-        '动画片': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/动画片.txt', 'lines': []},
-        '收音机': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/收音机.txt', 'lines': []},
-        '综艺': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/综艺.txt', 'lines': []},
-        '虎牙': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/虎牙.txt', 'lines': []},
-        '斗鱼': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/斗鱼.txt', 'lines': []},
-        '解说': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/解说.txt', 'lines': []},
-        '音乐': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/音乐.txt', 'lines': []},
-        '美食': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/美食.txt', 'lines': []},
-        '旅游': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/旅游.txt', 'lines': []},
-        '健康': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/健康.txt', 'lines': []},
-        '财经': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/财经.txt', 'lines': []},
-        '购物': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/购物.txt', 'lines': []},
-        '游戏': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/游戏.txt', 'lines': []},
-        '新闻': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/新闻.txt', 'lines': []},
-        '中国': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/中国.txt', 'lines': []},
-        '国际': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/国际.txt', 'lines': []},
-        '体育': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/体育.txt', 'lines': []},
-        '体育赛事': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/体育赛事.txt', 'lines': []},
-        '咪咕赛事': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/咪咕赛事.txt', 'lines': []},
-        '戏曲': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/戏曲.txt', 'lines': []},
-        '春晚': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/春晚.txt', 'lines': []},
-        '直播中国': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/直播中国.txt', 'lines': []},
-        '收藏频道': {'dict_file': f'{Config.MAIN_CHANNEL_DIR}/收藏频道.txt', 'lines': []},
-    }
+    "macau": {
+        "file": "地方台/澳门.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🇲🇴澳门频道"
+    },
+    "taiwan": {
+        "file": "地方台/台湾.txt",
+        "lines": [],
+        "match_type": "exact",
+        "title": "🇨🇳台湾频道"
+    },
 }
 
-# ========= 全局变量 =========
+# ========= 分类显示顺序 =========
+CATEGORY_ORDER = [
+    # 主频道
+    "yangshi", "weishi",
+    
+    # 地方台（按v2.00顺序）
+    "beijing", "shanghai", "guangdong", "jiangsu", "zhejiang",
+    "shandong", "sichuan", "henan", "hebei", "hunan", "chongqing",
+    "tianjin", "hubei", "anhui", "fujian", "liaoning", "shaanxi",
+    "hebei", "jiangxi", "guangxi", "yunnan", "shanxi", "heilongjiang",
+    "jilin", "guizhou", "gansu", "neimenggu", "xinjiang", "hainan",
+    "ningxia", "qinghai", "xizang",
+    
+    # 港澳台
+    "hongkong", "macau", "taiwan",
+    
+    # 其他分类
+    "digital", "movie", "tv_drama", "documentary", "cartoon", "radio",
+    "variety", "huya", "douyu", "commentary", "music", "food", "travel",
+    "health", "finance", "shopping", "game", "news", "china", "international",
+    "sports", "tyss", "mgss", "traditional_opera", "spring_festival_gala",
+    "camera", "favorite",
+]
+
+# ========= 全局状态类 =========
 class GlobalState:
-    """全局状态管理"""
     def __init__(self):
         self.start_time = None
-        self.processed_urls: Set[str] = set()
-        self.combined_blacklist: Set[str] = set()
-        self.corrections_name: Dict[str, str] = {}
-        self.other_lines: List[str] = []
-        self.other_lines_url: Set[str] = set()
-        self.logos: Dict[str, str] = {}
-        self.stats: Dict[str, Any] = {
-            'total_processed': 0,
-            'total_unique': 0,
-            'blacklisted': 0,
-            'categories': {}
+        self.processed_urls = set()  # 全局URL去重集合
+        self.combined_blacklist = set()  # 合并黑名单
+        self.corrections_name = {}  # 频道名称纠错字典
+        self.other_lines = []  # 其他频道行
+        self.other_lines_url = set()  # 其他频道URL（用于去重）
+        self.manual_sources = {}  # 手工区源
+        
+        # 统计信息
+        self.stats = {
+            'total_processed': 0,  # 总处理URL数
+            'blacklisted': 0,      # 黑名单过滤数
+            'categories': {}       # 各分类统计
         }
-    
-    def reset(self):
-        """重置状态（测试用）"""
-        self.__init__()
 
 g = GlobalState()
 
 # ========= 工具函数 =========
-class Utils:
-    """工具函数集合"""
-    
-    @staticmethod
-    def get_beijing_time() -> datetime:
-        """获取北京时间"""
-        utc_now = datetime.now(timezone.utc)
-        return utc_now + timedelta(hours=8)
-    
-    @staticmethod
-    def read_txt_to_array(file_path: str) -> List[str]:
-        """读取文本文件到数组"""
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return [line.strip() for line in f if line.strip()]
-        except FileNotFoundError:
-            print(f"⚠️ 文件不存在: {file_path}")
-            return []
-        except Exception as e:
-            print(f"❌ 读取文件错误 {file_path}: {e}")
-            return []
-    
-    @staticmethod
-    def get_random_user_agent() -> str:
-        """随机User-Agent"""
-        agents = [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
-        ]
-        return random.choice(agents)
-    
-    @staticmethod
-    def clean_url(url: str) -> str:
-        """清理URL中的$符号"""
-        if '$' in url:
-            return url[:url.rfind('$')]
-        return url
-    
-    @staticmethod
-    def traditional_to_simplified(text: str) -> str:
-        """繁体转简体"""
-        converter = opencc.OpenCC('t2s')
-        return converter.convert(text)
+def traditional_to_simplified(text: str) -> str:
+    """繁体转简体"""
+    converter = opencc.OpenCC('t2s')
+    return converter.convert(text)
 
-# ========= 名称处理类 =========
-class NameProcessor:
-    """频道名称处理器"""
-    
-    REMOVAL_LIST = [
-        "_电信", "电信", "「LiTV」", "频道", "频陆", "备陆", "壹陆", "贰陆", "叁陆", "肆陆",
-        "伍陆", "陆陆", "柒陆", "频晴", "频粤", "高清", "超清", "标清", "斯特", "粤陆",
-        "国陆", "肆柒", "频英", "频特", "频国", "频壹", "频贰", "肆贰", "频测", "咪咕",
-        "闽特", "高特", "频高", "频标", "汝阳", "频效", "国标", "粤标", "频推", "频流",
-        "粤高", "频限", "实时", "美推", "频美", "（HD）", "-HD", "英陆", "_ITV", "(北美)",
-        "(HK)", "AKtv", "「IPV4」", "「IPV6」", "[HD]", "[BD]", "[SD]", "[VGA]", "[超清]",
-        "4Gtv", "1080", "720", "480", "HD", "SD", "4K", "VGA", "(HD)", "(SD)", "(4K)",
-        "(VGA)", "{HD}", "{SD}", "{4K}", "{VGA}", "「4gTV」", "「回看」", "<HD>", "<SD>",
-        "<4K>", "<VGA>"
+def get_beijing_time():
+    """获取北京时间"""
+    utc_now = datetime.now(timezone.utc)
+    return utc_now + timedelta(hours=8)
+
+def read_txt_to_array(file_name):
+    """读取文本文件内容到数组"""
+    try:
+        with open(file_name, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            lines = [line.strip() for line in lines if line.strip()]
+            return lines
+    except FileNotFoundError:
+        print(f"❌ 文件未找到: {file_name}")
+        return []
+    except Exception as e:
+        print(f"❌ 读取文件错误 {file_name}: {e}")
+        return []
+
+def get_random_user_agent():
+    """获取随机User-Agent"""
+    USER_AGENTS = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36",
     ]
-    
-    @classmethod
-    def clean_channel_name(cls, name: str) -> str:
-        """清理频道名称"""
-        # 移除特定关键字
-        for item in cls.REMOVAL_LIST:
-            name = name.replace(item, "")
-        
-        # 移除末尾HD
-        if name.endswith("HD"):
-            name = name[:-2]
-        
-        # 移除末尾"台"
-        if name.endswith("台") and len(name) > 3:
-            name = name[:-1]
-        
-        return name
-    
-    @staticmethod
-    def process_cctv_name(name: str) -> str:
-        """处理CCTV名称"""
-        if "CCTV" not in name or "://" in name:
-            return name
-        
-        name = name.replace("IPV6", "").replace("PLUS", "+").replace("1080", "")
-        filtered = ''.join(c for c in name if c.isdigit() or c in 'K+')
-        
-        if not filtered.strip():
-            filtered = name.replace("CCTV", "")
-        
-        # 处理4K/8K
-        if len(filtered) > 2 and re.search(r'4K|8K', filtered):
-            filtered = re.sub(r'(4K|8K).*', r'\1', filtered)
-            if len(filtered) > 2:
-                filtered = re.sub(r'(4K|8K)', r'(\1)', filtered)
-        
-        return f"CCTV{filtered}"
-    
-    @staticmethod
-    def process_weishi_name(name: str) -> str:
-        """处理卫视名称"""
-        return re.sub(r'卫视「.*」', '卫视', name)
+    return random.choice(USER_AGENTS)
 
-# ========= 文件格式处理 =========
-class FileProcessor:
-    """文件格式处理器"""
-    
-    @staticmethod
-    def convert_m3u_to_txt(m3u_content: str) -> str:
-        """M3U转TXT"""
-        lines = m3u_content.split('\n')
-        txt_lines = []
-        channel_name = ""
+def clean_url(url):
+    """清理URL（移除$后的参数）"""
+    last_dollar_index = url.rfind('$')
+    if last_dollar_index != -1:
+        return url[:last_dollar_index]
+    return url
+
+def get_url_file_extension(url):
+    """获取URL文件扩展名"""
+    parsed_url = urlparse(url)
+    path = parsed_url.path
+    extension = os.path.splitext(path)[1]
+    return extension
+
+def convert_m3u_to_txt(m3u_content):
+    """将M3U格式转换为TXT格式"""
+    lines = m3u_content.split('\n')
+    txt_lines = []
+    channel_name = ""
+    for line in lines:
+        if line.startswith("#EXTM3U"):
+            continue
+        if line.startswith("#EXTINF"):
+            channel_name = line.split(',')[-1].strip()
+        elif line.startswith("http") or line.startswith("rtmp") or line.startswith("p3p"):
+            txt_lines.append(f"{channel_name},{line.strip()}")
         
-        for line in lines:
-            if line.startswith("#EXTM3U"):
-                continue
-            elif line.startswith("#EXTINF"):
-                channel_name = line.split(',')[-1].strip()
-            elif line.startswith(("http", "rtmp", "p3p")):
-                txt_lines.append(f"{channel_name},{line.strip()}")
-            elif "#genre#" not in line and "," in line and "://" in line:
-                pattern = r'^[^,]+,[^\s]+://[^\s]+$'
-                if re.match(pattern, line):
-                    txt_lines.append(line)
-        
-        return '\n'.join(txt_lines)
+        if "#genre#" not in line and "," in line and "://" in line:
+            pattern = r'^[^,]+,[^\s]+://[^\s]+$'
+            if bool(re.match(pattern, line)):
+                txt_lines.append(line)
     
-    @staticmethod
-    def make_m3u(txt_file: str, m3u_file: str):
-        """生成M3U文件"""
+    return '\n'.join(txt_lines)
+
+def process_name_string(input_str):
+    """处理频道名称字符串（主要用于处理CCTV频道名）"""
+    parts = input_str.split(',')
+    processed_parts = []
+    for part in parts:
+        processed_part = process_part(part)
+        processed_parts.append(processed_part)
+    result_str = ','.join(processed_parts)
+    return result_str
+
+def process_part(part_str):
+    """处理单个频道名称部分"""
+    if "CCTV" in part_str and "://" not in part_str:
+        part_str = part_str.replace("IPV6", "")
+        part_str = part_str.replace("PLUS", "+")
+        part_str = part_str.replace("1080", "")
+        filtered_str = ''.join(char for char in part_str if char.isdigit() or char == 'K' or char == '+')
+        if not filtered_str.strip():
+            filtered_str = part_str.replace("CCTV", "")
+        if len(filtered_str) > 2 and re.search(r'4K|8K', filtered_str):
+            filtered_str = re.sub(r'(4K|8K).*', r'\1', filtered_str)
+            if len(filtered_str) > 2: 
+                filtered_str = re.sub(r'(4K|8K)', r'(\1)', filtered_str)
+        return "CCTV" + filtered_str 
+    elif "卫视" in part_str:
+        pattern = r'卫视「.*」'
+        result_str = re.sub(pattern, '卫视', part_str)
+        return result_str
+    return part_str
+
+# ========= 频道名称清理 =========
+REMOVAL_LIST = [
+    "_电信", "电信", "频道", "频陆", "备陆", "壹陆", "贰陆", "叁陆", "肆陆", "伍陆",
+    "陆陆", "柒陆", "肆柒", "频英", "频特", "频国", "频晴", "频粤", "高清", "超清",
+    "标清", "斯特", "粤陆", "国陆", "频壹", "频贰", "肆贰", "频测", "咪咕", "闽特",
+    "高特", "频高", "频标", "汝阳", "频效", "国标", "粤标", "频推", "频流", "粤高",
+    "频限", "实时", "美推", "频美", "英陆", "(北美)", "「回看」", "[超清]", "「IPV4」",
+    "「IPV6」", "_ITV", "(HK)", "AKtv", "HD", "[HD]", "(HD)", "（HD）", "{HD}", "<HD>",
+    "-HD", "[BD]", "SD", "[SD]", "(SD)", "{SD}", "<SD>", "[VGA]", "4Gtv", "1080",
+    "720", "480", "VGA", "4K", "(4K)", "{4K}", "<4K>", "(VGA)", "{VGA}", "<VGA>",
+    "「4gTV」", "「LiTV」"
+]
+
+def clean_channel_name(channel_name, removal_list=REMOVAL_LIST):
+    """清理频道名称"""
+    for item in removal_list:
+        channel_name = channel_name.replace(item, "")
+
+    if channel_name.endswith("HD"):
+        channel_name = channel_name[:-2]
+    
+    if channel_name.endswith("台") and len(channel_name) > 3:
+        channel_name = channel_name[:-1]
+
+    return channel_name
+
+def correct_name_data(corrections, data):
+    """修正频道名称数据"""
+    corrected_data = []
+    for line in data:
+        line = line.strip()
+        if ',' not in line:
+            continue
+        name, url = line.split(',', 1)
+        if name in corrections and name != corrections[name]:
+            name = corrections[name]
+        corrected_data.append(f"{name},{url}")
+    return corrected_data
+
+def sort_data(order, data):
+    """按指定顺序排序数据"""
+    order_dict = {name: i for i, name in enumerate(order)}
+    def sort_key(line):
+        name = line.split(',')[0]
+        return order_dict.get(name, len(order))
+    sorted_data = sorted(data, key=sort_key)
+    return sorted_data
+
+# ========= 字典文件加载 =========
+def load_dictionaries():
+    """加载所有频道字典"""
+    print("📚 加载频道字典...")
+    dictionaries = {}
+    
+    for category_id, config in CHANNEL_CONFIG.items():
+        file_path = os.path.join('assets/livesource', config['file'])
+        if os.path.exists(file_path):
+            dictionaries[category_id] = read_txt_to_array(file_path)
+            print(f"   ✅ {config['title']}: {len(dictionaries[category_id])}条")
+        else:
+            dictionaries[category_id] = []
+            print(f"   ⚠️  {file_path}: 文件不存在")
+    
+    print(f"✅ 字典加载完成，共 {len(dictionaries)} 个分类")
+    return dictionaries
+
+def load_corrections_name():
+    """加载频道名称修正字典"""
+    filename = 'assets/livesource/corrections_name.txt'
+    corrections = {}
+    
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                # 跳过空行和注释行
+                if not line or line.startswith('#'):
+                    continue
+                parts = line.split(',')
+                if len(parts) >= 2:
+                    correct_name = parts[0]
+                    for name in parts[1:]:
+                        if name:
+                            corrections[name] = correct_name
+    except FileNotFoundError:
+        print(f"⚠️  修正字典文件未找到: {filename}")
+    except Exception as e:
+        print(f"❌ 加载修正字典错误: {e}")
+    
+    print(f"✅ 修正字典加载: {len(corrections)} 条规则")
+    if corrections:
+        print("   示例规则:")
+        for i, (wrong_name, correct_name) in enumerate(list(corrections.items())[:3]):
+            print(f"     {i+1}. '{wrong_name}' → '{correct_name}'")
+        if len(corrections) > 3:
+            print(f"     ... 还有 {len(corrections) - 3} 条")
+    
+    return corrections
+
+def load_blacklist():
+    """加载黑名单"""
+    print("🚫 加载黑名单...")
+    
+    def read_blacklist_from_txt(file_path):
+        blacklist = set()
         try:
-            output = '#EXTM3U x-tvg-url="https://live.fanmingming.cn/e.xml"\n'
-            
-            with open(txt_file, "r", encoding='utf-8') as f:
-                content = f.read()
-            
-            group_name = ""
-            for line in content.strip().split("\n"):
-                parts = line.split(",")
-                if len(parts) == 2 and "#genre#" in line:
-                    group_name = parts[0]
-                elif len(parts) == 2:
-                    channel_name, channel_url = parts
-                    logo = g.logos.get(channel_name)
-                    
-                    if logo:
-                        output += f'#EXTINF:-1 tvg-name="{channel_name}" tvg-logo="{logo}" group-title="{group_name}",{channel_name}\n'
-                    else:
-                        output += f'#EXTINF:-1 group-title="{group_name}",{channel_name}\n'
-                    output += f"{channel_url}\n"
-            
-            with open(m3u_file, "w", encoding='utf-8') as f:
-                f.write(output)
-            
-            print(f"✅ M3U文件生成成功: {m3u_file}")
-        except Exception as e:
-            print(f"❌ 生成M3U错误: {e}")
-
-# ========= HTTP处理器 =========
-class HttpHandler:
-    """HTTP请求处理器"""
-    
-    @staticmethod
-    def get_http_response(url: str, timeout: int = 8, retries: int = 2) -> Optional[str]:
-        """获取HTTP响应"""
-        headers = {'User-Agent': Utils.get_random_user_agent()}
-        
-        for attempt in range(retries):
-            try:
-                req = urllib.request.Request(url, headers=headers)
-                with urllib.request.urlopen(req, timeout=timeout) as resp:
-                    return resp.read().decode('utf-8')
-            except Exception as e:
-                if attempt < retries - 1:
-                    time.sleep(1.0 * (2 ** attempt))
-                else:
-                    print(f"❌ HTTP请求失败 {url}: {e}")
-        
-        return None
-
-# ========= 数据处理器 =========
-class DataProcessor:
-    """数据处理核心"""
-    
-    def __init__(self):
-        self.channel_dicts = {}
-        self._load_all_dicts()
-    
-    def _load_all_dicts(self):
-        """加载所有字典"""
-        print("📋 加载频道字典...")
-        
-        # 递归加载字典
-        def load_dicts(category_dict):
-            for name, config in category_dict.items():
-                dict_file = config['dict_file']
-                if os.path.exists(dict_file):
-                    self.channel_dicts[name] = Utils.read_txt_to_array(dict_file)
-                    print(f"  ✅ {name}: {len(self.channel_dicts[name])}条")
-                else:
-                    print(f"  ⚠️  字典文件不存在: {dict_file}")
-                    self.channel_dicts[name] = []
-        
-        for category in CHANNEL_CATEGORIES.values():
-            load_dicts(category)
-    
-    def classify_channel(self, channel_name: str, line: str, url: str) -> bool:
-        """分类频道"""
-        # 央视特殊处理
-        if "CCTV" in channel_name:
-            self._add_to_category('央视', line)
-            return True
-        
-        # 其他分类
-        for category_name, dict_data in self.channel_dicts.items():
-            if channel_name in dict_data:
-                self._add_to_category(category_name, line)
-                return True
-        
-        # 未分类
-        if url not in g.other_lines_url:
-            g.other_lines_url.add(url)
-            g.other_lines.append(line)
-        
-        return False
-    
-    def _add_to_category(self, category_name: str, line: str):
-        """添加到分类"""
-        for category_type in CHANNEL_CATEGORIES.values():
-            if category_name in category_type:
-                category_type[category_name]['lines'].append(line)
-                break
-    
-    def sort_category_lines(self, category_name: str) -> List[str]:
-        """排序分类行"""
-        if category_name not in self.channel_dicts:
-            return []
-        
-        dict_order = self.channel_dicts[category_name]
-        order_dict = {name: i for i, name in enumerate(dict_order)}
-        
-        # 获取分类行
-        lines = []
-        for category_type in CHANNEL_CATEGORIES.values():
-            if category_name in category_type:
-                lines = category_type[category_name]['lines']
-                break
-        
-        def sort_key(line):
-            name = line.split(',')[0]
-            return order_dict.get(name, len(order_dict))
-        
-        return sorted(set(lines), key=sort_key)
-
-# ========= 主处理类 =========
-class LiveSourceProcessor:
-    """直播源处理主类"""
-    
-    def __init__(self):
-        self.utils = Utils()
-        self.name_processor = NameProcessor()
-        self.file_processor = FileProcessor()
-        self.http_handler = HttpHandler()
-        self.data_processor = DataProcessor()
-        
-        # 初始化目录
-        os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
-    
-    def run(self):
-        """主运行方法"""
-        print("=" * 60)
-        print("🎬 IPTV直播源聚合处理工具 v0.04 重构版")
-        print("=" * 60)
-        
-        g.start_time = self.utils.get_beijing_time()
-        print(f"🕒 开始时间: {g.start_time.strftime('%Y%m%d %H:%M:%S')}")
-        
-        # 加载必要数据
-        self._load_blacklist()
-        self._load_corrections()
-        self._load_logos()
-        
-        # 处理流程
-        self._process_urls()
-        self._process_whitelist()
-        self._process_aktv()
-        self._process_manual()
-        self._generate_outputs()
-        self._generate_stats()
-        
-        print("=" * 60)
-        print("🎉 处理完成！")
-        print("=" * 60)
-    
-    def _load_blacklist(self):
-        """加载黑名单"""
-        print("🚫 加载黑名单...")
-        
-        def load_blacklist_file(file_path: str) -> Set[str]:
-            urls = set()
-            for line in Utils.read_txt_to_array(file_path):
-                if ',' in line:
-                    url = self.utils.clean_url(line.split(',')[1].strip())
-                    urls.add(url)
-            return urls
-        
-        auto = load_blacklist_file(Config.BLACKLIST_AUTO)
-        manual = load_blacklist_file(Config.BLACKLIST_MANUAL)
-        
-        g.combined_blacklist = auto.union(manual)
-        print(f"✅ 黑名单加载完成: 自动{len(auto)}条, 手动{len(manual)}条")
-    
-    def _load_corrections(self):
-        """加载纠错字典"""
-        print("🔧 加载名称纠错...")
-        
-        corrections = {}
-        for line in Utils.read_txt_to_array(Config.CORRECTIONS_FILE):
-            parts = line.strip().split(',')
-            if len(parts) >= 2:
-                correct_name = parts[0]
-                for name in parts[1:]:
-                    corrections[name] = correct_name
-        
-        g.corrections_name = corrections
-        print(f"✅ 纠错字典加载完成: {len(corrections)}条")
-    
-    def _load_logos(self):
-        """加载Logo"""
-        for line in Utils.read_txt_to_array(Config.LOGO_FILE):
-            if ',' in line:
-                name, url = line.split(',', 1)
-                g.logos[name.strip()] = url.strip()
-    
-    def _process_urls(self):
-        """处理URL列表"""
-        print("📡 处理URL源...")
-        
-        urls = Utils.read_txt_to_array(Config.URLS_FILE)
-        print(f"📋 发现 {len(urls)} 个数据源")
-        
-        for url in urls:
-            if url.startswith("http"):
-                # 处理日期变量
-                beijing_time = self.utils.get_beijing_time()
-                
-                if "{MMdd}" in url:
-                    date_str = beijing_time.strftime("%m%d")
-                    url = url.replace("{MMdd}", date_str)
-                
-                if "{MMdd-1}" in url:
-                    date_str = (beijing_time - timedelta(days=1)).strftime("%m%d")
-                    url = url.replace("{MMdd-1}", date_str)
-                
-                self._process_single_url(url)
-        
-        print(f"✅ URL处理完成: {len(urls)}个数据源")
-    
-    def _process_single_url(self, url: str):
-        """处理单个URL"""
-        try:
-            print(f"  📡 处理: {url}")
-            g.other_lines.append(f"◆◆◆　{url}")
-            
-            content = self.http_handler.get_http_response(url)
-            if not content:
-                return
-            
-            # 检查M3U格式
-            is_m3u = content.startswith("#EXTM3U") or content.startswith("#EXTINF")
-            if url.endswith((".m3u", ".m3u8")) or is_m3u:
-                content = self.file_processor.convert_m3u_to_txt(content)
-            
-            lines = content.split('\n')
-            processed = 0
-            
+            with open(file_path, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
             for line in lines:
-                if self._is_valid_channel_line(line):
-                    self._process_channel_line(line)
-                    processed += 1
-            
-            print(f"    ✅ 处理: {processed}个频道")
-            g.other_lines.append('')
-            
+                if ',' in line:
+                    url = line.split(',')[1].strip()
+                    cleaned_url = clean_url(url)
+                    blacklist.add(cleaned_url)
         except Exception as e:
-            print(f"  ❌ 处理URL错误: {e}")
+            print(f"❌ 读取黑名单错误 {file_path}: {e}")
+        return blacklist
     
-    def _is_valid_channel_line(self, line: str) -> bool:
-        """检查是否为有效的频道行"""
-        return (
-            "#genre#" not in line and 
-            "," in line and 
-            "://" in line and 
-            "tvbus://" not in line and 
-            "/udp/" not in line
-        )
+    # 读取自动和手动维护的黑名单
+    blacklist_auto = read_blacklist_from_txt('assets/livesource/blacklist/blacklist_auto.txt') 
+    blacklist_manual = read_blacklist_from_txt('assets/livesource/blacklist/blacklist_manual.txt') 
     
-    def _process_channel_line(self, line: str):
-        """处理单行频道数据"""
+    # 合并黑名单
+    combined_blacklist = set(blacklist_auto.union(blacklist_manual))
+    
+    print(f"   自动维护: {len(blacklist_auto)} 条")
+    print(f"   手动维护: {len(blacklist_manual)} 条")
+    print(f"   合并去重: {len(combined_blacklist)} 条")
+    
+    # 显示示例
+    if combined_blacklist:
+        print("   黑名单示例 (前3条):")
+        for i, url in enumerate(list(combined_blacklist)[:3]):
+            print(f"     {i+1}. {url[:80]}..." if len(url) > 80 else f"     {i+1}. {url}")
+        if len(combined_blacklist) > 3:
+            print(f"     ... 还有 {len(combined_blacklist) - 3} 条")
+    
+    return combined_blacklist
+
+# ========= 核心处理函数 =========
+def process_channel_line(line, dictionaries, is_manual=False):
+    """处理单行频道信息（v2.00逻辑，使用配置化结构）"""
+    # 检查是否为有效的频道行
+    if "#genre#" not in line and "#EXTINF:" not in line and "," in line and "://" in line:
+        # 分割行，获取原始频道名称和URL
         parts = line.split(',', 1)
         if len(parts) < 2:
             return
         
-        raw_name, raw_url = parts[0].strip(), parts[1].strip()
+        channel_name = parts[0].strip()
+        channel_address = parts[1].strip()
         
-        # 处理多源
-        if '#' in raw_url:
-            urls = raw_url.split('#')
-            for url in urls:
-                if url.strip():
-                    self._process_single_channel(raw_name, url.strip())
-        else:
-            self._process_single_channel(raw_name, raw_url)
-    
-    def _process_single_channel(self, raw_name: str, raw_url: str):
-        """处理单个频道"""
         # 清理URL
-        url = self.utils.clean_url(raw_url)
+        channel_address = clean_url(channel_address)
         
         # 黑名单检查
-        if url in g.combined_blacklist:
-            print(f"    🚫 黑名单过滤: {raw_name}")
+        if channel_address in g.combined_blacklist:
+            print(f"🚫 黑名单过滤: {channel_name}")
             g.stats['blacklisted'] += 1
             return
         
-        # 全局去重
-        if url in g.processed_urls:
-            print(f"    🔄 URL去重: {raw_name}")
+        # 全局URL去重检查
+        if channel_address in g.processed_urls:
+            print(f"🔄 URL去重: {channel_name}")
             return
         
-        g.processed_urls.add(url)
+        g.processed_urls.add(channel_address)
         g.stats['total_processed'] += 1
         
-        # 名称处理
-        name = self.name_processor.clean_channel_name(raw_name)
-        name = self.utils.traditional_to_simplified(name)
+        # 清理频道名称
+        channel_name = clean_channel_name(channel_name)
+        # 繁体转简体
+        channel_name = traditional_to_simplified(channel_name)
         
-        # 名称纠错
-        if name in g.corrections_name:
-            corrected = g.corrections_name[name]
-            if corrected != name:
-                print(f"    🔧 名称纠错: {name} -> {corrected}")
-                name = corrected
-        
-        # CCTV和卫视特殊处理
-        if "CCTV" in name:
-            name = self.name_processor.process_cctv_name(name)
-        elif "卫视" in name:
-            name = self.name_processor.process_weishi_name(name)
+        # 频道名称纠错
+        if channel_name in g.corrections_name:
+            corrected_name = g.corrections_name[channel_name]
+            if corrected_name != channel_name:
+                print(f"🔧 名称纠错: {channel_name} -> {corrected_name}")
+                channel_name = corrected_name
         
         # 重新组合行
-        processed_line = f"{name},{url}"
+        processed_line = channel_name + "," + channel_address
         
-        # 分类
-        self.data_processor.classify_channel(name, processed_line, url)
-    
-    def _process_whitelist(self):
-        """处理白名单"""
-        print("📋 处理白名单...")
+        # 按配置顺序匹配分类
+        matched = False
         
-        count = 0
-        for line in Utils.read_txt_to_array(Config.WHITELIST_AUTO):
-            if "#genre#" not in line and "," in line and "://" in line:
-                parts = line.split(",")
-                if len(parts) >= 3:
-                    try:
-                        response_time = float(parts[0].replace("ms", ""))
-                        if response_time < 2000:  # 2秒内的高质量源
-                            channel_line = ",".join(parts[1:])
-                            self._process_channel_line(channel_line)
-                            count += 1
-                    except ValueError:
-                        continue
+        # 优先处理特殊分类
+        # 1. 央视频道（CCTV关键词匹配）
+        if "CCTV" in channel_name:
+            CHANNEL_CONFIG["yangshi"]["lines"].append(process_name_string(processed_line))
+            matched = True
         
-        print(f"✅ 白名单处理完成: {count}个高质量源")
-    
-    def _process_aktv(self):
-        """处理AKTV源"""
-        print("📡 获取AKTV源...")
+        # 2. 卫视频道（精确匹配）
+        elif not matched and channel_name in dictionaries.get("weishi", []):
+            CHANNEL_CONFIG["weishi"]["lines"].append(process_name_string(processed_line))
+            matched = True
         
-        content = self.http_handler.get_http_response(Config.AKTV_URL)
-        if content:
-            print("✅ AKTV网络获取成功")
-            content = self.file_processor.convert_m3u_to_txt(content)
-            aktv_lines = content.strip().split('\n')
-        else:
-            print("⚠️ AKTV网络获取失败，使用本地")
-            aktv_lines = Utils.read_txt_to_array(Config.AKTV_LOCAL)
+        # 3. 体育赛事（关键词匹配）
+        elif not matched and any(tyss_keyword in channel_name for tyss_keyword in dictionaries.get("tyss", [])):
+            CHANNEL_CONFIG["tyss"]["lines"].append(process_name_string(processed_line))
+            matched = True
         
-        print(f"  处理 {len(aktv_lines)} 行")
-        for line in aktv_lines:
-            self._process_channel_line(line)
-    
-    def _process_manual(self):
-        """处理手工区"""
-        print("🔧 处理手工区...")
+        # 4. 咪咕赛事（关键词匹配）
+        elif not matched and any(mgss_keyword in channel_name for mgss_keyword in dictionaries.get("mgss", [])):
+            CHANNEL_CONFIG["mgss"]["lines"].append(process_name_string(processed_line))
+            matched = True
         
-        manual_files = {
-            '浙江': f'{Config.MANUAL_DIR}/浙江频道.txt',
-            '广东': f'{Config.MANUAL_DIR}/广东频道.txt',
-            '湖北': f'{Config.MANUAL_DIR}/湖北频道.txt',
-            '上海': f'{Config.MANUAL_DIR}/上海频道.txt',
-            '江苏': f'{Config.MANUAL_DIR}/江苏频道.txt',
-        }
+        # 5. 其他分类（精确匹配）
+        if not matched:
+            for category_id in CATEGORY_ORDER:
+                if category_id in ["yangshi", "weishi", "tyss", "mgss"]:
+                    continue  # 已经处理过
+                    
+                config = CHANNEL_CONFIG[category_id]
+                dict_list = dictionaries.get(category_id, [])
+                
+                if channel_name in dict_list:
+                    config["lines"].append(process_name_string(processed_line))
+                    matched = True
+                    break
         
-        for region, file_path in manual_files.items():
-            lines = Utils.read_txt_to_array(file_path)
+        # 如果未匹配到任何分类，放入other_lines
+        if not matched:
+            if channel_address not in g.other_lines_url:
+                g.other_lines_url.add(channel_address)
+                g.other_lines.append(processed_line)
+
+def process_url(url, dictionaries):
+    """处理单个URL（基于v2.00逻辑）"""
+    try:
+        g.other_lines.append("◆◆◆　" + url)
+        req = urllib.request.Request(url)
+        req.add_header('User-Agent', get_random_user_agent())
+
+        with urllib.request.urlopen(req) as response:
+            data = response.read()
+            text = data.decode('utf-8')
+            text = text.strip()
             
-            # 手动去重
-            seen_urls = set()
-            unique_lines = []
-            
+            # 判断是否为M3U格式
+            is_m3u = text.startswith("#EXTM3U") or text.startswith("#EXTINF")
+            if get_url_file_extension(url) in [".m3u", ".m3u8"] or is_m3u:
+                text = convert_m3u_to_txt(text)
+
+            lines = text.split('\n')
+            print(f"   行数: {len(lines)}")
+
             for line in lines:
-                if "#genre#" not in line and "," in line and "://" in line:
-                    parts = line.split(',', 1)
-                    if len(parts) >= 2:
-                        url = self.utils.clean_url(parts[1].strip())
-                        if url not in seen_urls:
-                            seen_urls.add(url)
-                            unique_lines.append(line)
-            
-            # 添加到对应分类
-            if region in CHANNEL_CATEGORIES['regions']:
-                CHANNEL_CATEGORIES['regions'][region]['lines'].extend(unique_lines)
-            
-            print(f"  ✅ {region}: {len(unique_lines)}个手工源")
+                if "#genre#" not in line and "," in line and "://" in line and "tvbus://" not in line and "/udp/" not in line:
+                    channel_name, channel_address = line.split(',', 1)
+                    if "#" not in channel_address:
+                        process_channel_line(line, dictionaries)
+                    else:
+                        url_list = channel_address.split('#')
+                        for channel_url in url_list:
+                            newline = f'{channel_name},{channel_url}'
+                            process_channel_line(newline, dictionaries)
+
+            g.other_lines.append('\n')
+
+    except Exception as e:
+        print(f"❌ 处理URL时发生错误：{e}")
+
+# ========= 白名单处理 =========
+def process_whitelist(dictionaries):
+    """处理白名单自动文件（基于v2.00逻辑）"""
+    print("🟢 处理白名单自动文件...")
+    whitelist_auto_lines = read_txt_to_array('assets/livesource/blacklist/whitelist_auto.txt')
     
-    def _generate_outputs(self):
-        """生成输出文件"""
-        print("📄 生成输出文件...")
-        
-        # 生成今日推荐
-        beijing_time = self.utils.get_beijing_time()
-        formatted_time = beijing_time.strftime("%Y%m%d %H:%M:%S")
-        
-        def get_random_line(file_path: str) -> str:
-            lines = Utils.read_txt_to_array(file_path)
-            return random.choice(lines).split(',')[-1] if lines else ""
-        
-        # 版本信息
-        version = f"{formatted_time},{get_random_line(f'{Config.MANUAL_DIR}/今日推台.txt')}"
-        about = f"👨潇然,{get_random_line(f'{Config.MANUAL_DIR}/今日推台.txt')}"
-        
-        # 今日推荐
-        mtv_templates = ["💯推荐", "🤫低调", "🟢使用", "⚠️禁止", "🚫贩卖"]
-        mtv_lines = [
-            f"{mtv},{get_random_line(f'{Config.MANUAL_DIR}/今日推荐.txt')}" 
-            for mtv in mtv_templates
-        ]
-        
-        # 生成完整版
-        full_content = self._build_playlist_content('full', version, about, mtv_lines)
-        self._save_file(Config.OUTPUT_FULL, full_content)
-        
-        # 生成精简版
-        lite_content = self._build_playlist_content('lite', version, about, mtv_lines)
-        self._save_file(Config.OUTPUT_LITE, lite_content)
-        
-        # 生成定制版
-        custom_content = self._build_playlist_content('custom', version, about, mtv_lines)
-        self._save_file(Config.OUTPUT_CUSTOM, custom_content)
-        
-        # 保存未分类源
-        self._save_file(Config.OUTPUT_OTHERS, '\n'.join(g.other_lines))
-        
-        # 生成M3U文件
-        self._generate_m3u_files()
+    print(f"   读取到 {len(whitelist_auto_lines)} 条记录")
+    print(f"   跳过标题行和表头...")
     
-    def _build_playlist_content(self, playlist_type: str, version: str, 
-                               about: str, mtv_lines: list) -> str:
-        """构建播放列表内容"""
-        content = []
+    valid_whitelist_count = 0
+    valid_whitelist_samples = []
+    
+    for i, whitelist_line in enumerate(whitelist_auto_lines):
+        if i < 2:  # 跳过前两行（标题和日期行）
+            continue
         
-        # 核心频道
-        if playlist_type in ['full', 'lite', 'custom']:
-            content.extend(self._build_category_section('央视', '🌐央视频道,#genre#'))
-            content.extend(self._build_category_section('卫视', '📡卫视频道,#genre#'))
-        
-        # 完整版和定制版添加其他分类
-        if playlist_type in ['full', 'custom']:
-            # 省级频道
-            for region in CHANNEL_CATEGORIES['regions']:
-                content.extend(self._build_category_section(region, f'🏛️{region}频道,#genre#'))
-        
-        # 完整版添加所有分类
-        if playlist_type == 'full':
-            # 特殊地区
-            for region in CHANNEL_CATEGORIES['special_regions']:
-                content.extend(self._build_category_section(region, f'🇭🇰{region}频道,#genre#'))
+        # 跳过表头行
+        if whitelist_line.startswith("RespoTime,whitelist,#genre#"):
+            continue
             
-            # 内容分类
-            content_categories = {
-                '数字': '🔢数字频道,#genre#',
-                '电影': '🎬电影频道,#genre#',
-                '电视剧': '📺电·视·剧,#genre#',
-                '纪录片': '🎥纪·录·片,#genre#',
-                '动画片': '🐱动·画·片,#genre#',
-                '收音机': '📻收·音·机,#genre#',
-                '综艺': '🎭综艺频道,#genre#',
-                '虎牙': '🐯虎牙直播,#genre#',
-                '斗鱼': '🐠斗鱼直播,#genre#',
-                '解说': '🎤解说频道,#genre#',
-                '音乐': '🎵音乐频道,#genre#',
-                '美食': '🍜美食频道,#genre#',
-                '旅游': '✈️旅游频道,#genre#',
-                '健康': '🏥健康频道,#genre#',
-                '财经': '💰财经频道,#genre#',
-                '购物': '🛍️购物频道,#genre#',
-                '游戏': '🎮游戏频道,#genre#',
-                '新闻': '📰新闻频道,#genre#',
-                '中国': '🇨🇳中国综合,#genre#',
-                '国际': '🌐国际频道,#genre#',
-                '体育': '⚽体育频道,#genre#',
-                '戏曲': '🎭戏曲频道,#genre#',
-                '春晚': '🧨春晚频道,#genre#',
-                '直播中国': '🏞️景区直播,#genre#',
-                '收藏频道': '⭐收藏频道,#genre#',
+        # 处理真正的白名单行
+        if "#genre#" not in whitelist_line and "," in whitelist_line and "://" in whitelist_line:
+            whitelist_parts = whitelist_line.split(",")
+            if len(whitelist_parts) >= 3:
+                valid_whitelist_count += 1
+                
+                # 保存示例
+                if len(valid_whitelist_samples) < 3:
+                    valid_whitelist_samples.append(whitelist_line)
+                
+                try:
+                    response_time = float(whitelist_parts[0].replace("ms", ""))
+                except ValueError:
+                    print(f"   ❌ response_time转换失败: {whitelist_line}")
+                    response_time = 60000
+                
+                # 只处理响应时间小于2秒的高质量源
+                if response_time < 2000:
+                    process_channel_line(",".join(whitelist_parts[1:]), dictionaries)
+    
+    print(f"   有效白名单记录: {valid_whitelist_count} 条")
+    if valid_whitelist_samples:
+        print("   白名单示例 (前3条):")
+        for i, line in enumerate(valid_whitelist_samples[:3]):
+            truncated = line[:80] + "..." if len(line) > 80 else line
+            print(f"     {i+1}. {truncated}")
+        if valid_whitelist_count > 3:
+            print(f"     ... 还有 {valid_whitelist_count - 3} 条")
+    print()
+
+# ========= AKTV特殊处理 =========
+def process_aktv(dictionaries):
+    """处理AKTV直播源（基于v2.00逻辑）"""
+    print("📺 获取AKTV直播源...")
+    
+    # AKTV源地址
+    aktv_url = "https://raw.githubusercontent.com/xiaoran67/update/refs/heads/main/assets/livesource/blacklist/whitelist_manual.txt"
+    
+    # 尝试从网络获取
+    def get_http_response(url, timeout=8, retries=2):
+        headers = {'User-Agent': get_random_user_agent()}
+        for attempt in range(retries):
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=timeout) as response:
+                    data = response.read()
+                    return data.decode('utf-8')
+            except Exception as e:
+                if attempt < retries - 1:
+                    time.sleep(1.0 * (2 ** attempt))
+                else:
+                    print(f"   ❌ HTTP请求失败: {e}")
+        return None
+    
+    aktv_text = get_http_response(aktv_url)
+    aktv_lines = []
+    
+    if aktv_text:
+        print("   ✅ AKTV成功获取内容")
+        aktv_text = convert_m3u_to_txt(aktv_text)
+        aktv_lines = aktv_text.strip().split('\n')
+    else:
+        print("   ⚠️ AKTV请求失败，从本地获取！")
+        aktv_lines = read_txt_to_array('assets/livesource/手工区/AKTV.txt')
+    
+    print(f"   处理AKTV数据，共 {len(aktv_lines)} 行")
+    
+    # 统计信息
+    print("   📊 AKTV频道统计:")
+    if aktv_lines:
+        print("   AKTV频道示例 (前3条):")
+        for i, line in enumerate(aktv_lines[:3]):
+            truncated = line[:60] + "..." if len(line) > 60 else line
+            print(f"     {i+1}. {truncated}")
+        if len(aktv_lines) > 3:
+            print(f"     ... 还有 {len(aktv_lines) - 3} 条")
+    
+    # 处理AKTV数据
+    for line in aktv_lines:
+        process_channel_line(line, dictionaries)
+
+# ========= 手工区处理 =========
+def process_manual_sources():
+    """处理手工区高质量源（基于v2.00逻辑）"""
+    print("🔧 处理手工区高质量源...")
+    
+    # 手工区文件列表
+    manual_files = {
+        'zhejiang': '浙江频道.txt',
+        'guangdong': '广东频道.txt',
+        'hubei': '湖北频道.txt',
+        'shanghai': '上海频道.txt',
+        'jiangsu': '江苏频道.txt'
+    }
+    
+    total_manual = 0
+    for region, filename in manual_files.items():
+        filepath = f'assets/livesource/手工区/{filename}'
+        lines = read_txt_to_array(filepath)
+        if lines:
+            print(f"   ✅ {filename}: {len(lines)} 条")
+            # 直接添加到对应分类的行中
+            if region in CHANNEL_CONFIG:
+                CHANNEL_CONFIG[region]["lines"].extend(lines)
+                total_manual += len(lines)
+        else:
+            print(f"   ⚠️  {filename}: 文件为空或不存在")
+    
+    print(f"   手工区总计: {total_manual} 条")
+
+# ========= 体育赛事处理 =========
+def normalize_date_to_md(text):
+    """将日期格式规范化为MM-DD格式（基于v2.00逻辑）"""
+    text = text.strip()
+    
+    def format_md(m):
+        month = int(m.group(1))
+        day = int(m.group(2))
+        after = m.group(3) or ''
+        if not after.startswith(' '):
+            after = ' ' + after
+        return f"{month:02d}-{day:02d}{after}"
+    
+    text = re.sub(r'^0?(\d{1,2})/0?(\d{1,2})(.*)', format_md, text)
+    text = re.sub(r'^\d{4}-0?(\d{1,2})-0?(\d{1,2})(.*)', format_md, text)
+    text = re.sub(r'^0?(\d{1,2})月0?(\d{1,2})日(.*)', format_md, text)
+
+    return text
+
+def filter_lines(lines, exclude_keywords):
+    """过滤包含特定关键词的行"""
+    return [line for line in lines if not any(keyword in line for keyword in exclude_keywords)]
+
+def custom_tyss_sort(lines):
+    """自定义体育赛事排序函数（数字前缀的倒序，其他正序）"""
+    digit_prefix = []
+    others = []
+    
+    for line in lines:
+        name_part = line.split(',')[0].strip()
+        if name_part and name_part[0].isdigit():
+            digit_prefix.append(line)
+        else:
+            others.append(line)
+    
+    digit_prefix_sorted = sorted(digit_prefix, reverse=True)
+    others_sorted = sorted(others)
+
+    return digit_prefix_sorted + others_sorted
+
+def generate_playlist_html(data_list, output_file='output/tiyu.html'):
+    """生成体育赛事HTML页面（基于v2.00逻辑）"""
+    html_head = '''
+    <!DOCTYPE html>
+    <html lang="zh">
+    <head>
+        <meta charset="UTF-8">        
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6061710286208572"
+     crossorigin="anonymous"></script>
+        <!-- Setup Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BS1Z4F5BDN"></script>
+        <script> 
+        window.dataLayer = window.dataLayer || []; 
+        function gtag(){dataLayer.push(arguments);} 
+        gtag('js', new Date()); 
+        gtag('config', 'G-BS1Z4F5BDN'); 
+        </script>
+        <title>最新体育赛事</title>
+        <style>
+            body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+            .item { margin-bottom: 20px; padding: 12px; background: #fff; border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+            .title { font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }
+            .url-wrapper { display: flex; align-items: center; gap: 10px; }
+            .url {
+                max-width: 80%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 0.9em;
+                color: #555;
+                background: #f0f0f0;
+                padding: 6px;
+                border-radius: 4px;
+                flex-grow: 1;
             }
-            
-            for cat_name, header in content_categories.items():
-                if cat_name in CHANNEL_CATEGORIES['content']:
-                    content.extend(self._build_category_section(cat_name, header))
-        
-        # 其他频道
-        if playlist_type in ['full', 'custom']:
-            content.append("📦其他频道,#genre#")
-            content.extend(sorted(set(g.other_lines)))
-            content.append('')
-        
-        # 更新时间
-        content.append("🕒更新时间,#genre#")
-        content.append(version)
-        content.append(about)
-        content.extend(mtv_lines)
-        content.append('')
-        
-        return '\n'.join(content)
+            .copy-btn {
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                padding: 6px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8em;
+            }
+            .copy-btn:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+    <h2>📋 最新体育赛事列表</h2>
+    '''
     
-    def _build_category_section(self, category_name: str, header: str) -> list:
-        """构建分类部分"""
-        section = [header]
-        sorted_lines = self.data_processor.sort_category_lines(category_name)
-        section.extend(sorted_lines)
-        section.append('')
-        return section
+    html_body = ''
+    for idx, entry in enumerate(data_list):
+        if ',' not in entry:
+            continue
+        info, url = entry.split(',', 1)
+        url_id = f"url_{idx}"
+        html_body += f'''
+        <div class="item">
+            <div class="title">🕒 {info}</div>
+            <div class="url-wrapper">
+                <div class="url" id="{url_id}">{url}</div>
+                <button class="copy-btn" onclick="copyToClipboard('{url_id}')">复制</button>
+            </div>
+        </div>
+        '''
     
-    def _save_file(self, file_path: str, content: str):
-        """保存文件"""
-        try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f"✅ 文件已保存: {file_path}")
-        except Exception as e:
-            print(f"❌ 保存文件错误 {file_path}: {e}")
+    html_tail = '''
+    <script>
+        function copyToClipboard(id) {
+            const el = document.getElementById(id);
+            const text = el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("已复制链接！");
+            }).catch(err => {
+                alert("复制失败: " + err);
+            });
+        }
+    </script>
+    </body>
+    </html>
+    '''
     
-    def _generate_m3u_files(self):
-        """生成M3U文件"""
-        print("🔄 生成M3U格式...")
-        
-        self.file_processor.make_m3u(Config.OUTPUT_FULL, 
-                                    Config.OUTPUT_FULL.replace('.txt', '.m3u'))
-        self.file_processor.make_m3u(Config.OUTPUT_LITE,
-                                    Config.OUTPUT_LITE.replace('.txt', '.m3u'))
-        self.file_processor.make_m3u(Config.OUTPUT_CUSTOM,
-                                    Config.OUTPUT_CUSTOM.replace('.txt', '.m3u'))
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html_head + html_body + html_tail)
+    print(f"✅ 体育赛事网页已生成：{output_file}")
+
+def process_tyss_data():
+    """处理体育赛事数据（基于v2.00逻辑）"""
+    print("🏆 处理体育赛事数据...")
     
-    def _generate_stats(self):
-        """生成统计信息"""
-        print("📊 生成统计信息...")
+    # 从配置中获取体育赛事行
+    tyss_lines = CHANNEL_CONFIG["tyss"]["lines"]
+    
+    if not tyss_lines:
+        print("⚠️  没有找到体育赛事数据")
+        return None
+    
+    # 日期格式化
+    normalized_tyss_lines = [normalize_date_to_md(s) for s in tyss_lines]
+    
+    # 过滤关键词
+    keywords_to_exclude_tiyu_txt = ["玉玉软件", "榴芒电视", "公众号", "麻豆", "「回看」"]
+    keywords_to_exclude_tiyu = ["玉玉软件", "榴芒电视", "公众号", "咪视通", "麻豆", "「回看」"]
+    
+    # 应用过滤
+    normalized_tyss_lines = filter_lines(normalized_tyss_lines, keywords_to_exclude_tiyu_txt)
+    
+    # 去重并排序
+    normalized_tyss_lines = custom_tyss_sort(set(normalized_tyss_lines))
+    
+    # 进一步过滤
+    filtered_tyss_lines = filter_lines(normalized_tyss_lines, keywords_to_exclude_tiyu)
+    
+    print(f"✅ 体育赛事处理完成：原始 {len(tyss_lines)} 条，过滤后 {len(filtered_tyss_lines)} 条")
+    
+    # 生成HTML文件
+    generate_playlist_html(filtered_tyss_lines, 'output/tiyu.html')
+    
+    # 生成TXT文件
+    with open('output/tiyu.txt', 'w', encoding='utf-8') as f:
+        for line in filtered_tyss_lines:
+            f.write(line + '\n')
+    print(f"✅ 体育赛事文本已生成: output/tiyu.txt")
+    
+    return filtered_tyss_lines
+
+# ========= 今日推荐和版本信息 =========
+def get_random_url(file_path):
+    """从文件中随机获取URL（基于v2.00逻辑）"""
+    urls = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                if ',' in line:
+                    url = line.strip().split(',')[-1]
+                    urls.append(url)
+    except Exception as e:
+        print(f"❌ 读取随机URL文件错误 {file_path}: {e}")
+    return random.choice(urls) if urls else ""
+
+# ========= 生成输出文件 =========
+def generate_output_files(filtered_tyss_lines=None):
+    """根据配置生成输出文件（基于v2.00逻辑，使用配置化结构）"""
+    print("\n📝 生成输出文件...")
+    
+    # 读取手工区文件
+    sports_manual = read_txt_to_array('assets/livesource/手工区/sports.txt')
+    zhuanxiang_yangshi = read_txt_to_array('assets/livesource/手工区/优质央视.txt')
+    zhuanxiang_weishi = read_txt_to_array('assets/livesource/手工区/优质卫视.txt')
+    about_info = read_txt_to_array('assets/livesource/手工区/about.txt')
+    aktv_lines = read_txt_to_array('assets/livesource/手工区/AKTV.txt')
+    
+    # 生成今日推荐和版本信息
+    beijing_time = get_beijing_time()
+    formatted_time = beijing_time.strftime("%Y%m%d %H:%M:%S")
+    
+    # 今日推荐
+    MTV1 = "💯推荐," + (get_random_url('assets/livesource/手工区/今日推荐.txt') or "")
+    MTV2 = "🤫低调," + (get_random_url('assets/livesource/手工区/今日推荐.txt') or "")
+    MTV3 = "🟢使用," + (get_random_url('assets/livesource/手工区/今日推荐.txt') or "")
+    MTV4 = "⚠️禁止," + (get_random_url('assets/livesource/手工区/今日推荐.txt') or "")
+    MTV5 = "🚫贩卖," + (get_random_url('assets/livesource/手工区/今日推荐.txt') or "")
+    
+    # 版本信息
+    version = formatted_time + "," + (get_random_url('assets/livesource/手工区/今日推台.txt') or "")
+    about = "👨潇然," + (get_random_url('assets/livesource/手工区/今日推台.txt') or "")
+    
+    # 构建完整版播放列表
+    print("✅ 构建完整版播放列表...")
+    all_lines_full = []
+    
+    # 按配置顺序添加分类
+    for category_id in CATEGORY_ORDER:
+        if category_id in CHANNEL_CONFIG:
+            config = CHANNEL_CONFIG[category_id]
+            lines = config["lines"]
+            if lines:
+                # 对每个分类的行进行去重和排序
+                dict_path = os.path.join('assets/livesource', config['file'])
+                if os.path.exists(dict_path):
+                    order_list = read_txt_to_array(dict_path)
+                    sorted_lines = sort_data(order_list, correct_name_data(g.corrections_name, lines))
+                    all_lines_full.append(f"{config['title']},#genre#")
+                    all_lines_full.extend(sorted_lines)
+                    all_lines_full.append('')
+                else:
+                    # 如果没有字典文件，使用简单排序
+                    all_lines_full.append(f"{config['title']},#genre#")
+                    all_lines_full.extend(sorted(set(correct_name_data(g.corrections_name, lines))))
+                    all_lines_full.append('')
+    
+    # 添加专享央视和卫视
+    if zhuanxiang_yangshi:
+        all_lines_full.append("☕️专享央视,#genre#")
+        all_lines_full.extend(zhuanxiang_yangshi)
+        all_lines_full.append('')
+    
+    if zhuanxiang_weishi:
+        all_lines_full.append("🍹专享卫视,#genre#")
+        all_lines_full.extend(zhuanxiang_weishi)
+        all_lines_full.append('')
+    
+    # 添加SPORTS手工源
+    if sports_manual:
+        all_lines_full.append("⚽️SPORTS,#genre#")
+        all_lines_full.extend(sports_manual)
+        all_lines_full.append('')
+    
+    # 添加体育赛事（如果已处理）
+    if filtered_tyss_lines:
+        all_lines_full.append("🏆️体育赛事,#genre#")
+        all_lines_full.extend(filtered_tyss_lines)
+        all_lines_full.append('')
+    
+    # 添加AKTV源
+    if aktv_lines:
+        all_lines_full.append("🚀 FreeTV,#genre#")
+        all_lines_full.extend(aktv_lines)
+        all_lines_full.append('')
+    
+    # 添加其他分类
+    if g.other_lines:
+        all_lines_full.append("📦其他频道,#genre#")
+        all_lines_full.extend(sorted(set(g.other_lines)))
+        all_lines_full.append('')
+    
+    # 添加更新时间
+    all_lines_full.append("🕒更新时间,#genre#")
+    all_lines_full.append(version)
+    all_lines_full.append(about)
+    all_lines_full.append(MTV1)
+    all_lines_full.append(MTV2)
+    all_lines_full.append(MTV3)
+    all_lines_full.append(MTV4)
+    all_lines_full.append(MTV5)
+    all_lines_full.extend(about_info)
+    all_lines_full.append('')
+    
+    # 构建精简版播放列表
+    print("✅ 构建精简版播放列表...")
+    all_lines_lite = []
+    
+    # 只包含央视频道和卫视频道
+    for category_id in ["yangshi", "weishi"]:
+        if category_id in CHANNEL_CONFIG:
+            config = CHANNEL_CONFIG[category_id]
+            lines = config["lines"]
+            if lines:
+                dict_path = os.path.join('assets/livesource', config['file'])
+                if os.path.exists(dict_path):
+                    order_list = read_txt_to_array(dict_path)
+                    sorted_lines = sort_data(order_list, correct_name_data(g.corrections_name, lines))
+                    all_lines_lite.append(f"{config['title']},#genre#")
+                    all_lines_lite.extend(sorted_lines)
+                    all_lines_lite.append('')
+    
+    # 添加更新时间
+    all_lines_lite.append("🕒更新时间,#genre#")
+    all_lines_lite.append(version)
+    all_lines_lite.append(about)
+    all_lines_lite.append(MTV1)
+    all_lines_lite.append(MTV2)
+    all_lines_lite.append(MTV3)
+    all_lines_lite.append(MTV4)
+    all_lines_lite.append(MTV5)
+    all_lines_lite.extend(about_info)
+    all_lines_lite.append('')
+    
+    # 构建定制版播放列表
+    print("✅ 构建定制版播放列表...")
+    all_lines_custom = []
+    
+    # 包含央视、卫视、港澳台和其他常用分类
+    custom_categories = [
+        "yangshi", "weishi", "hongkong", "macau", "taiwan", 
+        "digital", "movie", "tv_drama", "documentary", "cartoon",
+        "radio", "variety", "huya", "douyu", "music", "sports"
+    ]
+    
+    for category_id in custom_categories:
+        if category_id in CHANNEL_CONFIG:
+            config = CHANNEL_CONFIG[category_id]
+            lines = config["lines"]
+            if lines:
+                dict_path = os.path.join('assets/livesource', config['file'])
+                if os.path.exists(dict_path):
+                    order_list = read_txt_to_array(dict_path)
+                    sorted_lines = sort_data(order_list, correct_name_data(g.corrections_name, lines))
+                    all_lines_custom.append(f"{config['title']},#genre#")
+                    all_lines_custom.extend(sorted_lines)
+                    all_lines_custom.append('')
+    
+    # 添加专享央视和卫视
+    if zhuanxiang_yangshi:
+        all_lines_custom.append("☕️专享央视,#genre#")
+        all_lines_custom.extend(zhuanxiang_yangshi)
+        all_lines_custom.append('')
+    
+    if zhuanxiang_weishi:
+        all_lines_custom.append("🍹专享卫视,#genre#")
+        all_lines_custom.extend(zhuanxiang_weishi)
+        all_lines_custom.append('')
+    
+    # 添加SPORTS手工源
+    if sports_manual:
+        all_lines_custom.append("⚽️SPORTS,#genre#")
+        all_lines_custom.extend(sports_manual)
+        all_lines_custom.append('')
+    
+    # 添加体育赛事（如果已处理）
+    if filtered_tyss_lines:
+        all_lines_custom.append("🏆️体育赛事,#genre#")
+        all_lines_custom.extend(filtered_tyss_lines)
+        all_lines_custom.append('')
+    
+    # 添加其他分类
+    if g.other_lines:
+        all_lines_custom.append("📦其他频道,#genre#")
+        all_lines_custom.extend(sorted(set(g.other_lines)))
+        all_lines_custom.append('')
+    
+    # 添加更新时间
+    all_lines_custom.append("🕒更新时间,#genre#")
+    all_lines_custom.append(version)
+    all_lines_custom.append(about)
+    all_lines_custom.append(MTV1)
+    all_lines_custom.append(MTV2)
+    all_lines_custom.append(MTV3)
+    all_lines_custom.append(MTV4)
+    all_lines_custom.append(MTV5)
+    all_lines_custom.extend(about_info)
+    all_lines_custom.append('')
+    
+    # 定义输出文件名
+    output_full = "output/full.txt"
+    output_lite = "output/lite.txt"
+    output_custom = "output/custom.txt"
+    output_others = "output/others.txt"
+    
+    # 写入文件
+    try:
+        with open(output_full, 'w', encoding='utf-8') as f:
+            for line in all_lines_full:
+                f.write(line + '\n')
+        print(f"✅ 完整版播放列表已保存: {output_full}")
         
-        end_time = self.utils.get_beijing_time()
-        elapsed = end_time - g.start_time
-        minutes = int(elapsed.total_seconds() // 60)
-        seconds = int(elapsed.total_seconds() % 60)
+        with open(output_lite, 'w', encoding='utf-8') as f:
+            for line in all_lines_lite:
+                f.write(line + '\n')
+        print(f"✅ 精简版播放列表已保存: {output_lite}")
         
-        # 计算去重率
-        total_unique = len(g.processed_urls)
-        total_with_blacklist = total_unique + g.stats['blacklisted']
-        dup_rate = 0
-        if total_with_blacklist > 0:
-            dup_rate = (1 - total_unique / total_with_blacklist) * 100
+        with open(output_custom, 'w', encoding='utf-8') as f:
+            for line in all_lines_custom:
+                f.write(line + '\n')
+        print(f"✅ 定制版播放列表已保存: {output_custom}")
         
-        print(f"开始时间: {g.start_time.strftime('%Y%m%d %H:%M:%S')}")
-        print(f"结束时间: {end_time.strftime('%Y%m%d %H:%M:%S')}")
-        print(f"执行时间: {minutes}分{seconds}秒")
-        print(f"处理URL数: {g.stats['total_processed']}")
-        print(f"唯一URL数: {total_unique}")
-        print(f"黑名单过滤: {g.stats['blacklisted']}")
-        print(f"去重率: {dup_rate:.1f}%")
-        print(f"未分类源: {len(g.other_lines)}")
+        with open(output_others, 'w', encoding='utf-8') as f:
+            for line in g.other_lines:
+                f.write(line + '\n')
+        print(f"✅ 未分类频道列表已保存: {output_others}")
+        
+    except Exception as e:
+        print(f"❌ 保存文件时发生错误：{e}")
+
+# ========= 生成M3U格式文件 =========
+def make_m3u(txt_file, m3u_file):
+    """将TXT文件转换为M3U格式（基于v2.00逻辑）"""
+    try:
+        channels_logos = read_txt_to_array('assets/livesource/logo.txt')
+        
+        def get_logo_by_channel_name(channel_name):
+            for line in channels_logos:
+                if not line.strip():
+                    continue
+                if ',' in line:
+                    name, url = line.split(',', 1)
+                    if name == channel_name:
+                        return url
+            return None
+        
+        output_text = '#EXTM3U x-tvg-url="https://live.fanmingming.cn/e.xml"\n'
+        
+        with open(txt_file, "r", encoding='utf-8') as file:
+            input_text = file.read()
+        
+        lines = input_text.strip().split("\n")
+        group_name = ""
+        
+        for line in lines:
+            parts = line.split(",")
+            if len(parts) == 2 and "#genre#" in line:
+                group_name = parts[0]
+            elif len(parts) == 2:
+                channel_name = parts[0]
+                channel_url = parts[1]
+                logo_url = get_logo_by_channel_name(channel_name)
+                
+                if logo_url is None:
+                    output_text += f"#EXTINF:-1 group-title=\"{group_name}\",{channel_name}\n"
+                    output_text += f"{channel_url}\n"
+                else:
+                    output_text += f"#EXTINF:-1 tvg-name=\"{channel_name}\" tvg-logo=\"{logo_url}\" group-title=\"{group_name}\",{channel_name}\n"
+                    output_text += f"{channel_url}\n"
+        
+        with open(f"{m3u_file}", "w", encoding='utf-8') as file:
+            file.write(output_text)
+        
+        print(f"✅ M3U文件 '{m3u_file}' 生成成功。")
+    except Exception as e:
+        print(f"❌ 生成M3U文件错误: {e}")
 
 # ========= 主函数 =========
 def main():
     """主函数"""
-    processor = LiveSourceProcessor()
-    processor.run()
+    print("=" * 60)
+    print("🎬 IPTV直播源聚合处理工具 v3.00 - 重构版")
+    print("=" * 60)
+    
+    # 执行开始时间
+    g.start_time = get_beijing_time()
+    print(f"⏰ 开始时间: {g.start_time.strftime('%Y%m%d %H:%M:%S')}")
+    
+    # 1. 加载字典
+    dictionaries = load_dictionaries()
+    
+    # 2. 加载黑名单
+    g.combined_blacklist = load_blacklist()
+    
+    # 3. 加载修正字典
+    g.corrections_name = load_corrections_name()
+    
+    # 4. 处理URL列表
+    urls = read_txt_to_array('assets/livesource/urls-daily.txt')
+    print(f"\n📡 开始处理 {len(urls)} 个数据订阅源")
+    
+    for url in urls:
+        if url.startswith("http"):
+            # 处理日期占位符
+            if "{MMdd}" in url:
+                current_date_str = get_beijing_time().strftime("%m%d")
+                url = url.replace("{MMdd}", current_date_str)
+            if "{MMdd-1}" in url:
+                yesterday_date_str = (get_beijing_time() - timedelta(days=1)).strftime("%m%d")
+                url = url.replace("{MMdd-1}", yesterday_date_str)
+            
+            process_url(url, dictionaries)
+    
+    print(f"✅ URL处理完成，共处理 {len(urls)} 个数据源")
+    
+    # 5. 处理白名单
+    process_whitelist(dictionaries)
+    
+    # 6. 处理AKTV源
+    process_aktv(dictionaries)
+    
+    # 7. 处理手工区源
+    process_manual_sources()
+    
+    # 8. 处理体育赛事
+    filtered_tyss_lines = process_tyss_data()
+    
+    # 9. 生成输出文件
+    generate_output_files(filtered_tyss_lines)
+    
+    # 10. 生成M3U文件
+    make_m3u("output/full.txt", "output/full.m3u")
+    make_m3u("output/lite.txt", "output/lite.m3u")
+    make_m3u("output/custom.txt", "output/custom.m3u")
+    
+    # 11. 统计信息
+    timeend = get_beijing_time()
+    elapsed_time = timeend - g.start_time
+    total_seconds = elapsed_time.total_seconds()
+    minutes = int(total_seconds // 60)
+    seconds = int(total_seconds % 60)
+    
+    print(f"\n📊 处理统计:")
+    print(f"   开始时间: {g.start_time.strftime('%Y%m%d %H:%M:%S')}")
+    print(f"   结束时间: {timeend.strftime('%Y%m%d %H:%M:%S')}")
+    print(f"   执行时间: {minutes}分{seconds}秒")
+    
+    # 显示各分类统计
+    print(f"\n📈 分类统计:")
+    total_channels = 0
+    for category_id in CATEGORY_ORDER:
+        if category_id in CHANNEL_CONFIG:
+            config = CHANNEL_CONFIG[category_id]
+            count = len(config["lines"])
+            if count > 0:
+                print(f"   {config['title']}: {count}个频道")
+                total_channels += count
+    
+    print(f"\n📊 总计: {total_channels} 个频道")
+    
+    # 去重统计信息
+    processed_urls_count = len(g.processed_urls)
+    blacklist_urls_count = len(g.combined_blacklist)
+    total_processed_urls = processed_urls_count + blacklist_urls_count
+    
+    print(f"\n🔄 去重统计信息:")
+    print(f"   处理的唯一URL数: {processed_urls_count}")
+    print(f"   黑名单URL数: {blacklist_urls_count}")
+    print(f"   总处理URL数: {total_processed_urls}")
+    
+    if total_processed_urls > 0:
+        duplication_rate = (1 - processed_urls_count / total_processed_urls) * 100
+        print(f"   🔄 去重率: {duplication_rate:.1f}%")
+    
+    # 其他统计
+    print(f"\n📦 其他统计:")
+    print(f"   其他频道数: {len(g.other_lines)}")
+    print(f"   体育赛事数: {len(filtered_tyss_lines) if filtered_tyss_lines else 0}")
+    
+    print("\n✅ 处理完成!")
 
+# ========= 程序入口 =========
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print("\n⚠️ 用户中断程序")
     except Exception as e:
-        print(f"❌ 程序执行失败: {e}")
+        print(f"\n❌ 程序执行失败: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    print("\n💡 提示:")
+    print("  1. 修改 CHANNEL_CONFIG 可以增删改分类")
+    print("  2. 修改 CATEGORY_ORDER 可以调整显示顺序")
+    print("  3. 重新运行脚本即可应用新配置")
+    print("=" * 60)
 
-"""
-IPTV直播源聚合处理工具 v3.00 重构版
-基于v1.00版本的完全重构，保持完全兼容性
-
-重构特点：
-1. ✅ 面向对象设计：模块化、可维护性高
-2. ✅ 配置集中管理：所有路径和常量统一管理
-3. ✅ 数据驱动：频道分类配置化，易于扩展
-4. ✅ 代码精简：去除重复代码，逻辑清晰
-5. ✅ 性能优化：全局去重机制保持高效
-6. ✅ 完全兼容：输入输出、字典文件完全兼容v0.01 v1.00 v2.00
-
-主要改进：
-1. 🏗️ 架构优化：从过程式重构为面向对象
-2. 📁 配置管理：使用Config类统一管理路径
-3. 🗂️ 数据驱动：频道分类通过CHANNEL_CATEGORIES配置
-4. 🛠️ 工具类：提取通用功能到工具类
-5. 📊 状态管理：使用GlobalState统一管理全局状态
-6. 🔄 处理流程：重构为清晰的处理管道
-
-文件结构：
-项目目录/
-├── assets/livesource/       # 完全兼容原有目录结构
-│   ├── 主频道/
-│   ├── 地方台/
-│   ├── 手工区/
-│   ├── blacklist/
-│   ├── livesource3.py     # 主程序（v3.00）
-│   └── corrections_name.txt
-├── output/                  # 输出目录
-└── requirements.txt         # 依赖包
-
-输出文件（完全兼容v1.00）：
-output/
-  ├── full.txt              # 完整版
-  ├── full.m3u             # M3U格式
-  ├── lite.txt             # 精简版
-  ├── lite.m3u            # M3U格式
-  ├── custom.txt           # 定制版
-  ├── custom.m3u          # M3U格式
-  └── others.txt           # 未分类源
-
-使用说明：
-1. 确保目录结构与v1.00完全一致
-2. 运行：python main.py
-3. 结果在output目录查看
-
-版本历史：
-v0.00 (2025-01-01): 基础版本
-v1.00 (2025-01-01): 性能优化版，去重效率提升10倍
-v2.00 (2025-02-02): 架构优化版，代码更健壮，功能更完善
-v3.00 (2025-03-03): 重构优化版（当前版本）
-
-作者：潇然
-版本：v3.00
-日期：2025年3月3日
-"""
-# === LiveSource-Collector ====
-# ====== 版本v3.00 =========
-# ====== 重构优化版 ========
+# ====== 直播源聚合处理工具 v3.00 ======

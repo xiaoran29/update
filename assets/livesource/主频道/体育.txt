@@ -1,8 +1,25 @@
+体育赛事
+五星体育
+劲爆体育
+魅力足球
+四海钓鱼
+武术世界
+睛彩篮球
+睛彩竞技
+纬来体育
+天元围棋
+快乐垂钓
+赛事最经典
+体坛名栏汇
+DAZN 1
+DAZN 2
+24小时全运会轮播
+24小时城市联赛轮播
+
 体育频道
 
 精品体育
 超级体育
-体育赛事
 体育直播
 球类运动
 搏击体育
@@ -10,19 +27,16 @@
 冰雪体育
 电竞体育
 户外体育
-
 CCTV5
 CCTV5+
 CCTV风云足球
 CCTV高尔夫网球
 CCTV央视台球
-ESPN
 NBA TV
+ESPN
 Fox Sports 1
 Fox Sports 2
 Sky Sports F1
-DAZN 1
-DAZN 2
 UFC
 WWE
 NFL Network
@@ -35,26 +49,12 @@ Premier Sports 2
 Eurosport 1
 Eurosport 2
 广东体育
-五星体育
-劲爆体育
-广东体育
 广州竞赛
 江苏体育
 陕西体育休闲
 黑龙江文体
-魅力足球
-天元围棋
-快乐垂钓
 NEWTV 精品体育
 NEWTV 超级体育
-赛事最经典
-体坛名栏汇
-四海钓鱼
-武术世界
-24小时全运会轮播
-24小时城市联赛轮播
-睛彩篮球
-睛彩竞技
 Supersports 1
 Supersports 2
 Supersports 3
@@ -97,7 +97,6 @@ Motor Racing
 Rugby Pass TV
 NFL RedZone
 智林体育台
-纬来体育
 博斯运动
 爱尔达体育 2
 爱尔达体育 3

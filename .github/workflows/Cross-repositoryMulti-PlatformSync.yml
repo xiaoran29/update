@@ -1,4 +1,4 @@
-name: Cross Repository Multi-Platform Sync 🔄 
+name: Cross Repository Multi-Platform Sync 🔄
 
 on:
   workflow_dispatch:

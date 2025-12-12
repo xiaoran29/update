@@ -1,4 +1,6 @@
-name: Live Source Processing Script
+name: 📡 Live Source Processing
+
+# Channel Aggregator & Processor
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Update Clash Subscriptions
+name: 🚀 Update Clash Subscriptions
 
 on:
   workflow_dispatch:

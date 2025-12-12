@@ -1,7 +1,9 @@
-name: Whitelist Blacklist Automation
+name: ⚫ Whitelist Blacklist Automation ⚪
 on:
   workflow_dispatch:
-
+  # 每周自动运行一次（周一凌晨2点 UTC）
+  schedule:
+    - cron: '0 2 * * 1'
 jobs:
   check_live_sources:
     runs-on: ubuntu-latest
