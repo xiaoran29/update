@@ -16,7 +16,7 @@ import time
 
 # 初始化输出目录
 os.makedirs('output', exist_ok=True)  # 创建输出目录，如果已存在则不会报错
-print("创建输出目录: output")
+print(f"创建输出目录: output")
 
 # 繁体转简体函数
 def traditional_to_simplified(text: str) -> str:
@@ -24,15 +24,24 @@ def traditional_to_simplified(text: str) -> str:
     simplified_text = converter.convert(text)
     return simplified_text
 
+# 打印版本说明
+print()
+print(f"=" * 31)
+print(f"🐍 IPTV直播源聚合处理工具 v1.00")
+print(f"📺 Live Source Collector Processing")
+print(f"🔧 基于v0.00，基础版")
+print(f"=" * 31)
+
 # 记录脚本开始执行的时间
 timestart = datetime.now()
+print(f"\n⏰ 开始时间: {timestart.strftime('%Y%m%d %H:%M:%S')}")
 
 # 读取文本文件内容到数组的函数
 def read_txt_to_array(file_name):
     try:
         with open(file_name, 'r', encoding='utf-8') as file:
             lines = file.readlines()
-            lines = [line.strip() for line in lines if line.strip()]  # 跳过空行
+            lines = [line.strip() for line in lines if line.strip() and not line.strip().startswith('#')]
             return lines
 
     except FileNotFoundError:
@@ -46,7 +55,6 @@ def read_txt_to_array(file_name):
 def read_blacklist_from_txt(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
-
     BlackList = [line.split(',')[1].strip() for line in lines if ',' in line]
     return BlackList
 
@@ -55,23 +63,19 @@ blacklist_auto=read_blacklist_from_txt('assets/livesource/blacklist/blacklist_au
 blacklist_manual=read_blacklist_from_txt('assets/livesource/blacklist/blacklist_manual.txt') 
 combined_blacklist = set(blacklist_auto + blacklist_manual)
 
-# ========= 新增添加黑名单信息打印 =========
-print("🔴 黑名单统计信息:")
-print(f"   自动维护: {len(blacklist_auto)} 条")
-print(f"   手动维护: {len(blacklist_manual)} 条")
-print(f"   合并去重: {len(combined_blacklist)} 条")
+print(f"\n🔴 黑名单统计信息:")
+print(f"   🔧 自动维护: {len(blacklist_auto)} 条")
+print(f"   ✏️ 手动维护: {len(blacklist_manual)} 条")
+print(f"   🔄 合并去重: {len(combined_blacklist)} 条")
 
 # 显示前几条黑名单示例
-print("   黑名单示例 (前3条):")
+print(f"   黑名单示例 (前3条):")
 for i, url in enumerate(list(combined_blacklist)[:3]):
     print(f"     {i+1}. {url}")
 if len(combined_blacklist) > 3:
     print(f"     ... 还有 {len(combined_blacklist) - 3} 条")
-print()
-# =========end
 
 # ========= 频道分类存储变量定义 =========
-
 # 初始化各种频道类别的空列表，用于存储对应频道的播放源信息
 
 yangshi_lines = []      # 存储央视频道数据
@@ -109,8 +113,8 @@ ningxia_lines = []      # 宁夏
 qinghai_lines = []      # 青海
 xizang_lines = []       # 西藏
 
-hongkong_lines = []    # 香港
-macau_lines = []       # 澳门
+hongkong_lines = []   # 香港
+macau_lines = []      # 澳门
 taiwan_lines = []      # 台湾
 
 digital_lines = []     # 数字
@@ -138,7 +142,7 @@ tyss_lines = []        # 体育赛事
 mgss_lines = []        # 咪咕赛事
 traditional_opera_lines = [] # 戏曲频道
 spring_festival_gala_lines = [] # 历届春晚
-camera_lines = []      # 景区直播（直播中国）
+camera_lines = []      # 景区直播
 favorite_lines = []    # 收藏频道
 
 other_lines = []       # 其他未分类频道
@@ -167,14 +171,12 @@ def process_part(part_str):
             filtered_str = re.sub(r'(4K|8K).*', r'\1', filtered_str)
             if len(filtered_str) > 2: 
                 filtered_str = re.sub(r'(4K|8K)', r'(\1)', filtered_str)
-        return "CCTV"+filtered_str 
-        
+        return "CCTV"+filtered_str
     elif "卫视" in part_str:
         pattern = r'卫视「.*」'
         result_str = re.sub(pattern, '卫视', part_str)
         return result_str
     return part_str
-
 
 # 获取URL文件扩展名的函数
 def get_url_file_extension(url):
@@ -195,12 +197,10 @@ def convert_m3u_to_txt(m3u_content):
             channel_name = line.split(',')[-1].strip()
         elif line.startswith("http") or line.startswith("rtmp") or line.startswith("p3p") :
             txt_lines.append(f"{channel_name},{line.strip()}")
-        
         if "#genre#" not in line and "," in line and "://" in line:
             pattern = r'^[^,]+,[^\s]+://[^\s]+$'
             if bool(re.match(pattern, line)):
                 txt_lines.append(line)
-    
     return '\n'.join(txt_lines)
 
 # 检查URL是否已存在的函数
@@ -228,13 +228,10 @@ removal_list = ["_电信","电信","频道","频陆","备陆","壹陆","贰陆",
 def clean_channel_name(channel_name, removal_list):
     for item in removal_list:
         channel_name = channel_name.replace(item, "")
-
     if channel_name.endswith("HD"):
         channel_name = channel_name[:-2]
-    
     if channel_name.endswith("台") and len(channel_name) > 3:
         channel_name = channel_name[:-1]
-
     return channel_name
 
 # 处理单行频道信息的函数
@@ -246,13 +243,175 @@ def process_channel_line(line):
         channel_address = clean_url(line.split(',')[1].strip())
         line = channel_name + "," + channel_address
         if channel_address not in combined_blacklist:
-            # 央视频道
+            # 央视
             if "CCTV" in channel_name and check_url_existence(yangshi_lines, channel_address):
                 yangshi_lines.append(process_name_string(line.strip()))
-            # 卫视频道
+            # 卫视
             elif channel_name in weishi_dictionary and check_url_existence(weishi_lines, channel_address):
                 weishi_lines.append(process_name_string(line.strip()))
-            # 体育频道
+            # 北京
+            elif channel_name in beijing_dictionary and check_url_existence(beijing_lines, channel_address):
+                beijing_lines.append(process_name_string(line.strip()))
+            # 上海
+            elif channel_name in shanghai_dictionary and check_url_existence(shanghai_lines, channel_address):
+                shanghai_lines.append(process_name_string(line.strip()))
+            # 广东
+            elif channel_name in guangdong_dictionary and check_url_existence(guangdong_lines, channel_address):
+                guangdong_lines.append(process_name_string(line.strip()))
+            # 江苏
+            elif channel_name in jiangsu_dictionary and check_url_existence(jiangsu_lines, channel_address):
+                jiangsu_lines.append(process_name_string(line.strip()))
+            # 浙江
+            elif channel_name in zhejiang_dictionary and check_url_existence(zhejiang_lines, channel_address):
+                zhejiang_lines.append(process_name_string(line.strip()))
+            # 山东
+            elif channel_name in shandong_dictionary and check_url_existence(shandong_lines, channel_address):
+                shandong_lines.append(process_name_string(line.strip()))
+            # 四川
+            elif channel_name in sichuan_dictionary and check_url_existence(sichuan_lines, channel_address):
+                sichuan_lines.append(process_name_string(line.strip()))
+            # 河南
+            elif channel_name in henan_dictionary and check_url_existence(henan_lines, channel_address):
+                henan_lines.append(process_name_string(line.strip()))
+            # 湖南
+            elif channel_name in hunan_dictionary and check_url_existence(hunan_lines, channel_address):
+                hunan_lines.append(process_name_string(line.strip()))
+            # 重庆
+            elif channel_name in chongqing_dictionary and check_url_existence(chongqing_lines, channel_address):
+                chongqing_lines.append(process_name_string(line.strip()))
+            # 天津
+            elif channel_name in tianjin_dictionary and check_url_existence(tianjin_lines, channel_address):
+                tianjin_lines.append(process_name_string(line.strip()))
+            # 湖北
+            elif channel_name in hubei_dictionary and check_url_existence(hubei_lines, channel_address):
+                hubei_lines.append(process_name_string(line.strip()))
+            # 安徽
+            elif channel_name in anhui_dictionary and check_url_existence(anhui_lines, channel_address):
+                anhui_lines.append(process_name_string(line.strip()))
+            # 福建
+            elif channel_name in fujian_dictionary and check_url_existence(fujian_lines, channel_address):
+                fujian_lines.append(process_name_string(line.strip()))
+            # 辽宁
+            elif channel_name in liaoning_dictionary and check_url_existence(liaoning_lines, channel_address):
+                liaoning_lines.append(process_name_string(line.strip()))
+            # 陕西
+            elif channel_name in shaanxi_dictionary and check_url_existence(shaanxi_lines, channel_address):
+                shaanxi_lines.append(process_name_string(line.strip()))
+            # 河北
+            elif channel_name in hebei_dictionary and check_url_existence(hebei_lines, channel_address):
+                hebei_lines.append(process_name_string(line.strip()))
+            # 江西
+            elif channel_name in jiangxi_dictionary and check_url_existence(jiangxi_lines, channel_address):
+                jiangxi_lines.append(process_name_string(line.strip()))
+            # 广西
+            elif channel_name in guangxi_dictionary and check_url_existence(guangxi_lines, channel_address):
+                guangxi_lines.append(process_name_string(line.strip()))
+            # 云南
+            elif channel_name in yunnan_dictionary and check_url_existence(yunnan_lines, channel_address):
+                yunnan_lines.append(process_name_string(line.strip()))
+            # 山西
+            elif channel_name in shanxi_dictionary and check_url_existence(shanxi_lines, channel_address):
+                shanxi_lines.append(process_name_string(line.strip()))
+            # 黑龙江
+            elif channel_name in heilongjiang_dictionary and check_url_existence(heilongjiang_lines, channel_address):
+                heilongjiang_lines.append(process_name_string(line.strip()))
+            # 吉林
+            elif channel_name in jilin_dictionary and check_url_existence(jilin_lines, channel_address):
+                jilin_lines.append(process_name_string(line.strip()))
+            # 贵州
+            elif channel_name in guizhou_dictionary and check_url_existence(guizhou_lines, channel_address):
+                guizhou_lines.append(process_name_string(line.strip()))
+            # 甘肃
+            elif channel_name in gansu_dictionary and check_url_existence(gansu_lines, channel_address):
+                gansu_lines.append(process_name_string(line.strip()))
+            # 内蒙古
+            elif channel_name in neimenggu_dictionary and check_url_existence(neimenggu_lines, channel_address):
+                neimenggu_lines.append(process_name_string(line.strip()))
+            # 新疆
+            elif channel_name in xinjiang_dictionary and check_url_existence(xinjiang_lines, channel_address):
+                xinjiang_lines.append(process_name_string(line.strip()))
+            # 海南
+            elif channel_name in hainan_dictionary and check_url_existence(hainan_lines, channel_address):
+                hainan_lines.append(process_name_string(line.strip()))
+            # 宁夏
+            elif channel_name in ningxia_dictionary and check_url_existence(ningxia_lines, channel_address):
+                ningxia_lines.append(process_name_string(line.strip()))
+            # 青海
+            elif channel_name in qinghai_dictionary and check_url_existence(qinghai_lines, channel_address):
+                qinghai_lines.append(process_name_string(line.strip()))
+            # 西藏
+            elif channel_name in xizang_dictionary and check_url_existence(xizang_lines, channel_address):
+                xizang_lines.append(process_name_string(line.strip()))
+            # 香港
+            elif channel_name in hongkong_dictionary and check_url_existence(hongkong_lines, channel_address):
+                hongkong_lines.append(process_name_string(line.strip()))
+            # 澳门
+            elif channel_name in macau_dictionary and check_url_existence(macau_lines, channel_address):
+                macau_lines.append(process_name_string(line.strip()))
+            # 台湾
+            elif channel_name in taiwan_dictionary and check_url_existence(taiwan_lines, channel_address):
+                taiwan_lines.append(process_name_string(line.strip()))
+            # 数字
+            elif channel_name in digital_dictionary and check_url_existence(digital_lines, channel_address):
+                digital_lines.append(process_name_string(line.strip()))
+            # 电影
+            elif channel_name in movie_dictionary and check_url_existence(movie_lines, channel_address):
+                movie_lines.append(process_name_string(line.strip()))
+            # 电视剧
+            elif channel_name in tv_drama_dictionary and check_url_existence(tv_drama_lines, channel_address):
+                tv_drama_lines.append(process_name_string(line.strip()))
+            # 纪录片
+            elif channel_name in documentary_dictionary and check_url_existence(documentary_lines, channel_address):
+                documentary_lines.append(process_name_string(line.strip()))
+            # 动画片
+            elif channel_name in cartoon_dictionary and check_url_existence(cartoon_lines, channel_address):
+                cartoon_lines.append(process_name_string(line.strip()))
+            # 收音机
+            elif channel_name in radio_dictionary and check_url_existence(radio_lines, channel_address):
+                radio_lines.append(process_name_string(line.strip()))
+            # 综艺
+            elif channel_name in variety_dictionary and check_url_existence(variety_lines, channel_address):
+                variety_lines.append(process_name_string(line.strip()))
+            # 虎牙
+            elif channel_name in huya_dictionary and check_url_existence(huya_lines, channel_address):
+                huya_lines.append(process_name_string(line.strip()))
+            # 斗鱼
+            elif channel_name in douyu_dictionary and check_url_existence(douyu_lines, channel_address):
+                douyu_lines.append(process_name_string(line.strip()))
+            # 解说
+            elif channel_name in commentary_dictionary and check_url_existence(commentary_lines, channel_address):
+                commentary_lines.append(process_name_string(line.strip()))
+            # 音乐
+            elif channel_name in music_dictionary and check_url_existence(music_lines, channel_address):
+                music_lines.append(process_name_string(line.strip()))
+            # 美食
+            elif channel_name in food_dictionary and check_url_existence(food_lines, channel_address):
+                food_lines.append(process_name_string(line.strip()))
+            # 旅游
+            elif channel_name in travel_dictionary and check_url_existence(travel_lines, channel_address):
+                travel_lines.append(process_name_string(line.strip()))
+            # 健康
+            elif channel_name in health_dictionary and check_url_existence(health_lines, channel_address):
+                health_lines.append(process_name_string(line.strip()))
+            # 财经
+            elif channel_name in finance_dictionary and check_url_existence(finance_lines, channel_address):
+                finance_lines.append(process_name_string(line.strip()))
+            # 购物
+            elif channel_name in shopping_dictionary and check_url_existence(shopping_lines, channel_address):
+                shopping_lines.append(process_name_string(line.strip()))
+            # 游戏
+            elif channel_name in game_dictionary and check_url_existence(game_lines, channel_address):
+                game_lines.append(process_name_string(line.strip()))
+            # 新闻
+            elif channel_name in news_dictionary and check_url_existence(news_lines, channel_address):
+                news_lines.append(process_name_string(line.strip()))
+            # 中国
+            elif channel_name in china_dictionary and check_url_existence(china_lines, channel_address):
+                china_lines.append(process_name_string(line.strip()))
+            # 国际
+            elif channel_name in international_dictionary and check_url_existence(international_lines, channel_address):
+                international_lines.append(process_name_string(line.strip()))
+            # 体育
             elif channel_name in sports_dictionary and check_url_existence(sports_lines, channel_address):
                 sports_lines.append(process_name_string(line.strip()))
             # 体育赛事
@@ -265,123 +424,16 @@ def process_channel_line(line):
 #                mgss_lines.append(process_name_string(line.strip()))
             elif any(mgss_keyword in channel_name for mgss_keyword in mgss_dictionary) and check_url_existence(mgss_lines, channel_address):
                 mgss_lines.append(process_name_string(line.strip()))
-            # 地方台分类
-            elif channel_name in beijing_dictionary and check_url_existence(beijing_lines, channel_address):
-                beijing_lines.append(process_name_string(line.strip()))
-            elif channel_name in shanghai_dictionary and check_url_existence(shanghai_lines, channel_address):
-                shanghai_lines.append(process_name_string(line.strip()))
-            elif channel_name in guangdong_dictionary and check_url_existence(guangdong_lines, channel_address):
-                guangdong_lines.append(process_name_string(line.strip()))
-            elif channel_name in jiangsu_dictionary and check_url_existence(jiangsu_lines, channel_address):
-                jiangsu_lines.append(process_name_string(line.strip()))
-            elif channel_name in zhejiang_dictionary and check_url_existence(zhejiang_lines, channel_address):
-                zhejiang_lines.append(process_name_string(line.strip()))
-            elif channel_name in shandong_dictionary and check_url_existence(shandong_lines, channel_address):
-                shandong_lines.append(process_name_string(line.strip()))
-            elif channel_name in sichuan_dictionary and check_url_existence(sichuan_lines, channel_address):
-                sichuan_lines.append(process_name_string(line.strip()))
-            elif channel_name in henan_dictionary and check_url_existence(henan_lines, channel_address):
-                henan_lines.append(process_name_string(line.strip()))
-            elif channel_name in hunan_dictionary and check_url_existence(hunan_lines, channel_address):
-                hunan_lines.append(process_name_string(line.strip()))
-            elif channel_name in chongqing_dictionary and check_url_existence(chongqing_lines, channel_address):
-                chongqing_lines.append(process_name_string(line.strip()))
-            elif channel_name in tianjin_dictionary and check_url_existence(tianjin_lines, channel_address):
-                tianjin_lines.append(process_name_string(line.strip()))
-            elif channel_name in hubei_dictionary and check_url_existence(hubei_lines, channel_address):
-                hubei_lines.append(process_name_string(line.strip()))
-            elif channel_name in anhui_dictionary and check_url_existence(anhui_lines, channel_address):
-                anhui_lines.append(process_name_string(line.strip()))
-            elif channel_name in fujian_dictionary and check_url_existence(fujian_lines, channel_address):
-                fujian_lines.append(process_name_string(line.strip()))
-            elif channel_name in liaoning_dictionary and check_url_existence(liaoning_lines, channel_address):
-                liaoning_lines.append(process_name_string(line.strip()))
-            elif channel_name in shaanxi_dictionary and check_url_existence(shaanxi_lines, channel_address):
-                shaanxi_lines.append(process_name_string(line.strip()))
-            elif channel_name in hebei_dictionary and check_url_existence(hebei_lines, channel_address):
-                hebei_lines.append(process_name_string(line.strip()))
-            elif channel_name in jiangxi_dictionary and check_url_existence(jiangxi_lines, channel_address):
-                jiangxi_lines.append(process_name_string(line.strip()))
-            elif channel_name in guangxi_dictionary and check_url_existence(guangxi_lines, channel_address):
-                guangxi_lines.append(process_name_string(line.strip()))
-            elif channel_name in yunnan_dictionary and check_url_existence(yunnan_lines, channel_address):
-                yunnan_lines.append(process_name_string(line.strip()))
-            elif channel_name in shanxi_dictionary and check_url_existence(shanxi_lines, channel_address):
-                shanxi_lines.append(process_name_string(line.strip()))
-            elif channel_name in heilongjiang_dictionary and check_url_existence(heilongjiang_lines, channel_address):
-                heilongjiang_lines.append(process_name_string(line.strip()))
-            elif channel_name in jilin_dictionary and check_url_existence(jilin_lines, channel_address):
-                jilin_lines.append(process_name_string(line.strip()))
-            elif channel_name in guizhou_dictionary and check_url_existence(guizhou_lines, channel_address):
-                guizhou_lines.append(process_name_string(line.strip()))
-            elif channel_name in gansu_dictionary and check_url_existence(gansu_lines, channel_address):
-                gansu_lines.append(process_name_string(line.strip()))
-            elif channel_name in neimenggu_dictionary and check_url_existence(neimenggu_lines, channel_address):
-                neimenggu_lines.append(process_name_string(line.strip()))
-            elif channel_name in xinjiang_dictionary and check_url_existence(xinjiang_lines, channel_address):
-                xinjiang_lines.append(process_name_string(line.strip()))
-            elif channel_name in hainan_dictionary and check_url_existence(hainan_lines, channel_address):
-                hainan_lines.append(process_name_string(line.strip()))
-            elif channel_name in ningxia_dictionary and check_url_existence(ningxia_lines, channel_address):
-                ningxia_lines.append(process_name_string(line.strip()))
-            elif channel_name in qinghai_dictionary and check_url_existence(qinghai_lines, channel_address):
-                qinghai_lines.append(process_name_string(line.strip()))
-            elif channel_name in xizang_dictionary and check_url_existence(xizang_lines, channel_address):
-                xizang_lines.append(process_name_string(line.strip()))
-            # 港澳台分类
-            elif channel_name in hongkong_dictionary and check_url_existence(hongkong_lines, channel_address):
-                hongkong_lines.append(process_name_string(line.strip()))
-            elif channel_name in macau_dictionary and check_url_existence(macau_lines, channel_address):
-                macau_lines.append(process_name_string(line.strip()))
-            elif channel_name in taiwan_dictionary and check_url_existence(taiwan_lines, channel_address):
-                taiwan_lines.append(process_name_string(line.strip()))
-            # 定制分类
-            elif channel_name in digital_dictionary and check_url_existence(digital_lines, channel_address):
-                digital_lines.append(process_name_string(line.strip()))
-            elif channel_name in movie_dictionary and check_url_existence(movie_lines, channel_address):
-                movie_lines.append(process_name_string(line.strip()))
-            elif channel_name in tv_drama_dictionary and check_url_existence(tv_drama_lines, channel_address):
-                tv_drama_lines.append(process_name_string(line.strip()))
-            elif channel_name in documentary_dictionary and check_url_existence(documentary_lines, channel_address):
-                documentary_lines.append(process_name_string(line.strip()))
-            elif channel_name in cartoon_dictionary and check_url_existence(cartoon_lines, channel_address):
-                cartoon_lines.append(process_name_string(line.strip()))
-            elif channel_name in radio_dictionary and check_url_existence(radio_lines, channel_address):
-                radio_lines.append(process_name_string(line.strip()))
-            elif channel_name in variety_dictionary and check_url_existence(variety_lines, channel_address):
-                variety_lines.append(process_name_string(line.strip()))
-            elif channel_name in huya_dictionary and check_url_existence(huya_lines, channel_address):
-                huya_lines.append(process_name_string(line.strip()))
-            elif channel_name in douyu_dictionary and check_url_existence(douyu_lines, channel_address):
-                douyu_lines.append(process_name_string(line.strip()))
-            elif channel_name in commentary_dictionary and check_url_existence(commentary_lines, channel_address):
-                commentary_lines.append(process_name_string(line.strip()))
-            elif channel_name in music_dictionary and check_url_existence(music_lines, channel_address):
-                music_lines.append(process_name_string(line.strip()))
-            elif channel_name in food_dictionary and check_url_existence(food_lines, channel_address):
-                food_lines.append(process_name_string(line.strip()))
-            elif channel_name in travel_dictionary and check_url_existence(travel_lines, channel_address):
-                travel_lines.append(process_name_string(line.strip()))
-            elif channel_name in health_dictionary and check_url_existence(health_lines, channel_address):
-                health_lines.append(process_name_string(line.strip()))
-            elif channel_name in finance_dictionary and check_url_existence(finance_lines, channel_address):
-                finance_lines.append(process_name_string(line.strip()))
-            elif channel_name in shopping_dictionary and check_url_existence(shopping_lines, channel_address):
-                shopping_lines.append(process_name_string(line.strip()))
-            elif channel_name in game_dictionary and check_url_existence(game_lines, channel_address):
-                game_lines.append(process_name_string(line.strip()))
-            elif channel_name in news_dictionary and check_url_existence(news_lines, channel_address):
-                news_lines.append(process_name_string(line.strip()))
-            elif channel_name in china_dictionary and check_url_existence(china_lines, channel_address):
-                china_lines.append(process_name_string(line.strip()))
-            elif channel_name in international_dictionary and check_url_existence(international_lines, channel_address):
-                international_lines.append(process_name_string(line.strip()))
+            # 戏曲频道
             elif channel_name in traditional_opera_dictionary and check_url_existence(traditional_opera_lines, channel_address):
                 traditional_opera_lines.append(process_name_string(line.strip()))
+            # 历届春晚
             elif channel_name in spring_festival_gala_dictionary and check_url_existence(spring_festival_gala_lines, channel_address):
                 spring_festival_gala_lines.append(process_name_string(line.strip()))
+            # 景区直播
             elif channel_name in camera_dictionary and check_url_existence(camera_lines, channel_address):
                 camera_lines.append(process_name_string(line.strip()))
+            # 收藏频道
             elif channel_name in favorite_dictionary and check_url_existence(favorite_lines, channel_address):
                 favorite_lines.append(process_name_string(line.strip()))
             # 未匹配到任何分类，放入other_lines
@@ -406,7 +458,6 @@ def process_url(url):
         other_lines.append("◆◆◆　"+url)
         req = urllib.request.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-
         with urllib.request.urlopen(req) as response:
             data = response.read()
             text = data.decode('utf-8')
@@ -414,10 +465,8 @@ def process_url(url):
             is_m3u = text.startswith("#EXTM3U") or text.startswith("#EXTINF")
             if get_url_file_extension(url)==".m3u" or get_url_file_extension(url)==".m3u8" or is_m3u:
                 text=convert_m3u_to_txt(text)
-
             lines = text.split('\n')
             print(f"行数: {len(lines)}")
-
             for line in lines:
                 if  "#genre#" not in line and "," in line and "://" in line and "tvbus://" not in line and "/udp/" not in line:
                     channel_name, channel_address = line.split(',', 1)
@@ -428,7 +477,6 @@ def process_url(url):
                         for channel_url in url_list:
                             newline=f'{channel_name},{channel_url}'
                             process_channel_line(newline)
-
             other_lines.append('\n')
 
     except Exception as e:
@@ -438,9 +486,8 @@ def process_url(url):
 current_directory = os.getcwd()
 
 # ========= 频道字典文件读取 =========
-
 # 读取各种频道的字典文件（用于频道分类）
-print("📋 加载频道字典...")
+print(f"\n📋 加载频道字典...")
 
 yangshi_dictionary = read_txt_to_array('assets/livesource/主频道/CCTV.txt')
 weishi_dictionary = read_txt_to_array('assets/livesource/主频道/卫视.txt')
@@ -517,22 +564,6 @@ print(f"   地方台: 31个分类已加载")
 print(f"   港澳台: 3个分类已加载")
 print(f"   其他分类: 27个分类已加载")
 
-"""
-# 下面是0.00版本脚本
-# 加载频道名称修正字典的函数
-def load_corrections_name(filename):
-    corrections = {}
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            if not line.strip():
-                continue
-            parts = line.strip().split(',')
-            correct_name = parts[0]
-            for name in parts[1:]:
-                corrections[name] = correct_name
-    return corrections
-"""
-
 # 加载频道名称修正字典的函数
 def load_corrections_name(filename):
     corrections = {}
@@ -550,6 +581,7 @@ def load_corrections_name(filename):
                 for name in parts[1:]:
                     if name:  # 跳过空的别名
                         corrections[name] = correct_name
+
     except FileNotFoundError:
         print(f"❌ 修正字典文件未找到: {filename}")
     except Exception as e:
@@ -558,19 +590,16 @@ def load_corrections_name(filename):
 
 # 加载名称修正字典
 corrections_name = load_corrections_name('assets/livesource/corrections_name.txt')
-# ========= 新增添加频道更名信息打印 =========
-print("🔄 频道更名修正字典:")
+print(f"\n🔄 频道更名修正字典:")
 print(f"   加载了 {len(corrections_name)} 条修正规则")
 if corrections_name:
-    print("   修正规则示例 (前3条):")
+    print(f"   修正规则示例 (前3条):")
     for i, (wrong_name, correct_name) in enumerate(list(corrections_name.items())[:3]):
         print(f"     {i+1}. '{wrong_name}' → '{correct_name}'")
     if len(corrections_name) > 3:
         print(f"     ... 还有 {len(corrections_name) - 3} 条修正规则")
 else:
-    print("   未加载到有效的修正规则")
-print()
-# =========end
+    print(f"   未加载到有效的修正规则")
 
 # 修正频道名称数据的函数
 def correct_name_data(corrections, data):
@@ -596,7 +625,7 @@ def sort_data(order, data):
 
 # 读取URL列表文件
 urls = read_txt_to_array('assets/livesource/urls-daily.txt')
-print(f"📋 发现 {len(urls)} 个数据订阅源")
+print(f"\n📋 发现 {len(urls)} 个数据订阅源")
 for url in urls:
     if url.startswith("http"):
         if "{MMdd}" in url:
@@ -626,13 +655,11 @@ def custom_sort(s):
         return 0
 
 # 处理白名单自动文件
-print("🟢 处理白名单自动文件...")
+print(f"\n🟢 处理白名单自动文件...")
 whitelist_auto_lines = read_txt_to_array('assets/livesource/blacklist/whitelist_auto.txt')
 
-# ========= 新增添加白名单信息打印开始 =========
 # 打印白名单统计信息
 print(f"   读取到 {len(whitelist_auto_lines)} 条记录")
-print(f"   跳过标题行和表头...")
 
 # 统计有效白名单记录
 valid_whitelist_count = 0
@@ -641,21 +668,17 @@ valid_whitelist_samples = []
 for i, whitelist_line in enumerate(whitelist_auto_lines):
     if i < 2:  # 跳过前两行（标题和日期行）
         continue
-    
     # 跳过表头行
     if whitelist_line.startswith("RespoTime,whitelist,#genre#"):
         continue
-        
     # 处理真正的白名单行
     if "#genre#" not in whitelist_line and "," in whitelist_line and "://" in whitelist_line:
         whitelist_parts = whitelist_line.split(",")
         if len(whitelist_parts) >= 3:
             valid_whitelist_count += 1
-            
             # 保存示例
             if len(valid_whitelist_samples) < 3:
                 valid_whitelist_samples.append(whitelist_line)
-            
             try:
                 response_time = float(whitelist_parts[0].replace("ms", ""))
             except ValueError:
@@ -666,14 +689,13 @@ for i, whitelist_line in enumerate(whitelist_auto_lines):
 
 print(f"   有效白名单记录: {valid_whitelist_count} 条")
 if valid_whitelist_samples:
-    print("   白名单示例 (前3条):")
+    print(f"   白名单示例 (前3条):")
     for i, line in enumerate(valid_whitelist_samples[:3]):
         print(f"     {i+1}. {line[:80]}..." if len(line) > 80 else f"     {i+1}. {line}")
     if valid_whitelist_count > 3:
         print(f"     ... 还有 {valid_whitelist_count - 3} 条")
-print()
-# =========end
 
+# 遍历自动测试生成的播放源白名单
 for whitelist_line in whitelist_auto_lines:
     if  "#genre#" not in whitelist_line and "," in whitelist_line and "://" in whitelist_line:
         whitelist_parts = whitelist_line.split(",")
@@ -708,7 +730,7 @@ def get_http_response(url, timeout=8, retries=2, backoff_factor=1.0):
             if attempt < retries - 1:
                 time.sleep(backoff_factor * (2 ** attempt))
     return None
-    
+
 # 将日期格式规范化为MM-DD格式的函数
 def normalize_date_to_md(text):
     text = text.strip()
@@ -722,36 +744,32 @@ def normalize_date_to_md(text):
     text = re.sub(r'^0?(\d{1,2})/0?(\d{1,2})(.*)', format_md, text)
     text = re.sub(r'^\d{4}-0?(\d{1,2})-0?(\d{1,2})(.*)', format_md, text)
     text = re.sub(r'^0?(\d{1,2})月0?(\d{1,2})日(.*)', format_md, text)
-
     return text
 
 # 规范化体育赛事行的日期格式
 normalized_tyss_lines = [normalize_date_to_md(s) for s in tyss_lines]
 
 # ========= AKTV特殊处理 =========
-# 获取AKTV直播源
 aktv_lines = []  # 存储AKTV频道数据
 aktv_url = "https://raw.githubusercontent.com/xiaoran67/update/refs/heads/main/assets/livesource/blacklist/whitelist_manual.txt"  # AKTV源地址
 aktv_text = get_http_response(aktv_url)
 if aktv_text:
-    print("AKTV成功获取内容")
+    print(f" ")
+    print(f"📺 AKTV成功获取内容")
     aktv_text = convert_m3u_to_txt(aktv_text)
     aktv_lines = aktv_text.strip().split('\n')
 else:
-    print("AKTV请求失败，从本地获取！")
+    print(f"⚠️ AKTV请求失败，从本地获取！")
     aktv_lines = read_txt_to_array('assets/livesource/手工区/AKTV.txt')
 
-# ========= 新增添加AKTV信息打印 =========
-print("📺 AKTV频道统计:")
+print(f"AKTV频道统计:")
 print(f"   获取到 {len(aktv_lines)} 条AKTV频道记录")
 if aktv_lines:
-    print("   AKTV频道示例 (前3条):")
+    print(f"   AKTV频道示例 (前3条):")
     for i, line in enumerate(aktv_lines[:3]):
         print(f"     {i+1}. {line[:60]}..." if len(line) > 60 else f"     {i+1}. {line}")
     if len(aktv_lines) > 3:
         print(f"     ... 还有 {len(aktv_lines) - 3} 条")
-print()
-# =========end
 
 # 过滤包含特定关键词的行的函数
 def filter_lines(lines, exclude_keywords):
@@ -865,13 +883,14 @@ def custom_tyss_sort(lines):
 # 过滤体育赛事文本中的特定关键词
 keywords_to_exclude_tiyu_txt = ["玉玉软件", "榴芒电视","公众号","麻豆","「回看」"]
 normalized_tyss_lines = filter_lines(normalized_tyss_lines, keywords_to_exclude_tiyu_txt)
+
 # 去重并排序
 normalized_tyss_lines = custom_tyss_sort(set(normalized_tyss_lines))
 
 # 过滤体育赛事HTML中的特定关键词
 keywords_to_exclude_tiyu = ["玉玉软件", "榴芒电视","公众号","咪视通","麻豆","「回看」"]
 filtered_tyss_lines = filter_lines(normalized_tyss_lines, keywords_to_exclude_tiyu)
-print(f"🏆 体育赛事处理完成：原始 {len(tyss_lines)} 条，过滤后 {len(filtered_tyss_lines)} 条")
+print(f"\n🏆 体育赛事处理完成：原始 {len(tyss_lines)} 条，过滤后 {len(filtered_tyss_lines)} 条")
 
 # 生成体育赛事HTML文件
 generate_playlist_html(filtered_tyss_lines, 'output/tiyu.html')
@@ -892,7 +911,7 @@ def get_random_url(file_path):
     return random.choice(urls) if urls else None
 
 # ========= 今日推荐和版本信息 =========
-print("🕒 生成今日推荐和版本信息")
+print(f"\n🕒 生成今日推荐和版本信息")
 # 获取北京时间
 utc_time = datetime.now(timezone.utc)
 beijing_time = utc_time + timedelta(hours=8)
@@ -912,18 +931,8 @@ about_video2 = "https://gitlab.com/xiaoran67/update/-/raw/main/assets/livesource
 version = formatted_time + "," + get_random_url('assets/livesource/手工区/今日推台.txt')
 about = "👨潇然," + get_random_url('assets/livesource/手工区/今日推台.txt')
 
-"""
 # 处理手工添加的频道源
-print(f"🔧 处理手工区高质量源...")
-zhejiang_lines = zhejiang_lines + read_txt_to_array('assets/livesource/手工区/浙江频道.txt')
-guangdong_lines = guangdong_lines + read_txt_to_array('assets/livesource/手工区/广东频道.txt')
-hubei_lines = hubei_lines + read_txt_to_array('assets/livesource/手工区/湖北频道.txt')
-shanghai_lines = shanghai_lines + read_txt_to_array('assets/livesource/手工区/上海频道.txt')
-jiangsu_lines = jiangsu_lines + read_txt_to_array('assets/livesource/手工区/江苏频道.txt')
-"""
-
-# 处理手工添加的频道源
-print(f"🔧 处理手工区高质量源...")
+print(f"\n🔧 处理手工区高质量源...")
 
 # 读取并统计各个手工区文件
 zhejiang_manual = read_txt_to_array('assets/livesource/手工区/浙江频道.txt')
@@ -939,7 +948,6 @@ print(f"   湖北频道: {len(hubei_manual)} 条")
 print(f"   上海频道: {len(shanghai_manual)} 条")
 print(f"   江苏频道: {len(jiangsu_manual)} 条")
 print(f"   手工区总计: {len(zhejiang_manual) + len(guangdong_manual) + len(hubei_manual) + len(shanghai_manual) + len(jiangsu_manual)} 条")
-print()
 
 # 添加到对应的频道列表
 zhejiang_lines += zhejiang_manual
@@ -948,120 +956,183 @@ hubei_lines += hubei_manual
 shanghai_lines += shanghai_manual
 jiangsu_lines += jiangsu_manual
 
-print("📄 生成播放列表文件")
+print(f"\n📄 生成播放列表文件")
 
 # 构建完整版播放列表
-all_lines_full =  ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary,correct_name_data(corrections_name,yangshi_lines)) + ['\n'] + \
-        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary,correct_name_data(corrections_name,weishi_lines)) + ['\n'] + \
-        ["🏛️北京频道,#genre#"] + sort_data(beijing_dictionary, correct_name_data(corrections_name, beijing_lines)) + ['\n'] + \
-        ["🏙️上海频道,#genre#"] + sort_data(shanghai_dictionary, correct_name_data(corrections_name, shanghai_lines)) + ['\n'] + \
-        ["🐯广东频道,#genre#"] + sort_data(guangdong_dictionary,set(correct_name_data(corrections_name,guangdong_lines))) + ['\n'] + \
-        ["🎐江苏频道,#genre#"] + sort_data(jiangsu_dictionary, correct_name_data(corrections_name, jiangsu_lines)) + ['\n'] + \
-        ["🧵浙江频道,#genre#"] + sort_data(zhejiang_dictionary, correct_name_data(corrections_name, zhejiang_lines)) + ['\n'] + \
-        ["⛰️山东频道,#genre#"] + sort_data(shandong_dictionary, correct_name_data(corrections_name, shandong_lines)) + ['\n'] + \
-        ["🐼四川频道,#genre#"] + sort_data(sichuan_dictionary, correct_name_data(corrections_name, sichuan_lines)) + ['\n'] + \
-        ["🐘河南频道,#genre#"] + sorted(set(correct_name_data(corrections_name,henan_lines))) + ['\n'] + \
-        ["⛩️河北频道,#genre#"] + sorted(set(correct_name_data(corrections_name,hebei_lines))) + ['\n'] + \
-        ["🌶️湖南频道,#genre#"] + sort_data(hunan_dictionary,correct_name_data(corrections_name,hunan_lines)) + ['\n'] + \
-        ["🏞️重庆频道,#genre#"] + sort_data(chongqing_dictionary, correct_name_data(corrections_name, chongqing_lines)) + ['\n'] + \
-        ["🚢天津频道,#genre#"] + sort_data(tianjin_dictionary, correct_name_data(corrections_name, tianjin_lines)) + ['\n'] + \
-        ["🏯湖北频道,#genre#"] + sort_data(hubei_dictionary,correct_name_data(corrections_name,hubei_lines)) + ['\n'] + \
-        ["🌾安徽频道,#genre#"] + sort_data(anhui_dictionary, correct_name_data(corrections_name, anhui_lines)) + ['\n'] + \
-        ["🌊福建频道,#genre#"] + sort_data(fujian_dictionary, correct_name_data(corrections_name, fujian_lines)) + ['\n'] + \
-        ["⛰️辽宁频道,#genre#"] + sort_data(liaoning_dictionary, correct_name_data(corrections_name, liaoning_lines)) + ['\n'] + \
-        ["🔥陕西频道,#genre#"] + sort_data(shaanxi_dictionary, correct_name_data(corrections_name, shaanxi_lines)) + ['\n'] + \
-        ["⛩️河北频道,#genre#"] + sort_data(hebei_dictionary, correct_name_data(corrections_name, hebei_lines)) + ['\n'] + \
-        ["🔥江西频道,#genre#"] + sort_data(jiangxi_dictionary, correct_name_data(corrections_name, jiangxi_lines)) + ['\n'] + \
-        ["💃广西频道,#genre#"] + sort_data(guangxi_dictionary,set(correct_name_data(corrections_name,guangxi_lines))) + ['\n'] + \
-        ["☁️云南频道,#genre#"] + sort_data(yunnan_dictionary, correct_name_data(corrections_name, yunnan_lines)) + ['\n'] + \
-        ["🏮山西频道,#genre#"] + sort_data(shanxi_dictionary, correct_name_data(corrections_name, shanxi_lines)) + ['\n'] + \
-        ["🐻黑·龙·江,#genre#"] + sort_data(heilongjiang_dictionary, correct_name_data(corrections_name, heilongjiang_lines)) + ['\n'] + \
-        ["🎎吉林频道,#genre#"] + sort_data(jilin_dictionary, correct_name_data(corrections_name, jilin_lines)) + ['\n'] + \
-        ["⛰️贵州频道,#genre#"] + sort_data(guizhou_dictionary, correct_name_data(corrections_name, guizhou_lines)) + ['\n'] + \
-        ["🐫甘肃频道,#genre#"] + sort_data(gansu_dictionary, correct_name_data(corrections_name, gansu_lines)) + ['\n'] + \
-        ["🐮内·蒙·古,#genre#"] + sort_data(neimenggu_dictionary, correct_name_data(corrections_name, neimenggu_lines)) + ['\n'] + \
-        ["🍇新疆频道,#genre#"] + sort_data(xinjiang_dictionary, correct_name_data(corrections_name, xinjiang_lines)) + ['\n'] + \
-        ["🏝️海南频道,#genre#"] + sort_data(hainan_dictionary, correct_name_data(corrections_name, hainan_lines)) + ['\n'] + \
-        ["🕌宁夏频道,#genre#"] + sort_data(ningxia_dictionary, correct_name_data(corrections_name, ningxia_lines)) + ['\n'] + \
-        ["🐑青海频道,#genre#"] + sort_data(qinghai_dictionary, correct_name_data(corrections_name, qinghai_lines)) + ['\n'] + \
-        ["🐐西藏频道,#genre#"] + sort_data(xizang_dictionary, correct_name_data(corrections_name, xizang_lines)) + ['\n'] + \
-        ["☕️专享央视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质央视.txt') + ['\n'] + \
-        ["🍹专享卫视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质卫视.txt') + ['\n'] + \
-        ["⚽️SPORTS,#genre#"] + read_txt_to_array('assets/livesource/手工区/sports.txt') + ['\n'] + \
+playlist_full =  ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary,correct_name_data(corrections_name,yangshi_lines)) + ['\n'] + \
+        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary,set(correct_name_data(corrections_name,weishi_lines))) + ['\n'] + \
+        ["🏛️北京频道,#genre#"] + sort_data(beijing_dictionary,list(set(correct_name_data(corrections_name,beijing_lines)))) + ['\n'] + \
+        ["🏙️上海频道,#genre#"] + sort_data(shanghai_dictionary,list(set(correct_name_data(corrections_name,shanghai_lines)))) + ['\n'] + \
+        ["🦁广东频道,#genre#"] + sort_data(guangdong_dictionary,list(set(correct_name_data(corrections_name,guangdong_lines)))) + ['\n'] + \
+        ["🍃江苏频道,#genre#"] + sort_data(jiangsu_dictionary, list(set(correct_name_data(corrections_name, jiangsu_lines)))) + ['\n'] + \
+        ["🧵浙江频道,#genre#"] + sort_data(zhejiang_dictionary, list(set(correct_name_data(corrections_name, zhejiang_lines)))) + ['\n'] + \
+        ["⛰️山东频道,#genre#"] + sort_data(shandong_dictionary, list(set(correct_name_data(corrections_name, shandong_lines)))) + ['\n'] + \
+        ["🐼四川频道,#genre#"] + sort_data(sichuan_dictionary, list(set(correct_name_data(corrections_name, sichuan_lines)))) + ['\n'] + \
+        ["⚔️河南频道,#genre#"] + sort_data(henan_dictionary, list(set(correct_name_data(corrections_name,henan_lines)))) + ['\n'] + \
+        ["🌶️湖南频道,#genre#"] + sort_data(hunan_dictionary, list(set(correct_name_data(corrections_name,hunan_lines)))) + ['\n'] + \
+        ["🍲重庆频道,#genre#"] + sort_data(chongqing_dictionary, list(set(correct_name_data(corrections_name, chongqing_lines)))) + ['\n'] + \
+        ["🚢天津频道,#genre#"] + sort_data(tianjin_dictionary, list(set(correct_name_data(corrections_name, tianjin_lines)))) + ['\n'] + \
+        ["🌉湖北频道,#genre#"] + sort_data(hubei_dictionary, list(set(correct_name_data(corrections_name,hubei_lines)))) + ['\n'] + \
+        ["🌾安徽频道,#genre#"] + sort_data(anhui_dictionary, list(set(correct_name_data(corrections_name, anhui_lines)))) + ['\n'] + \
+        ["🌊福建频道,#genre#"] + sort_data(fujian_dictionary, list(set(correct_name_data(corrections_name, fujian_lines)))) + ['\n'] + \
+        ["🏭辽宁频道,#genre#"] + sort_data(liaoning_dictionary, list(set(correct_name_data(corrections_name, liaoning_lines)))) + ['\n'] + \
+        ["🗿陕西频道,#genre#"] + sort_data(shaanxi_dictionary, list(set(correct_name_data(corrections_name, shaanxi_lines)))) + ['\n'] + \
+        ["⛩️河北频道,#genre#"] + sort_data(hebei_dictionary, list(set(correct_name_data(corrections_name, hebei_lines)))) + ['\n'] + \
+        ["🍶江西频道,#genre#"] + sort_data(jiangxi_dictionary, list(set(correct_name_data(corrections_name, jiangxi_lines)))) + ['\n'] + \
+        ["💃广西频道,#genre#"] + sort_data(guangxi_dictionary,list(set(correct_name_data(corrections_name,guangxi_lines)))) + ['\n'] + \
+        ["☁️云南频道,#genre#"] + sort_data(yunnan_dictionary, list(set(correct_name_data(corrections_name, yunnan_lines)))) + ['\n'] + \
+        ["🏮山西频道,#genre#"] + sort_data(shanxi_dictionary, list(set(correct_name_data(corrections_name, shanxi_lines)))) + ['\n'] + \
+        ["❄️黑·龙·江,#genre#"] + sort_data(heilongjiang_dictionary, list(set(correct_name_data(corrections_name, heilongjiang_lines)))) + ['\n'] + \
+        ["🎎吉林频道,#genre#"] + sort_data(jilin_dictionary, list(set(correct_name_data(corrections_name, jilin_lines)))) + ['\n'] + \
+        ["🌈贵州频道,#genre#"] + sort_data(guizhou_dictionary, list(set(correct_name_data(corrections_name, guizhou_lines)))) + ['\n'] + \
+        ["🐫甘肃频道,#genre#"] + sort_data(gansu_dictionary, list(set(correct_name_data(corrections_name, gansu_lines)))) + ['\n'] + \
+        ["🐎内·蒙·古,#genre#"] + sort_data(neimenggu_dictionary, list(set(correct_name_data(corrections_name, neimenggu_lines)))) + ['\n'] + \
+        ["🍇新疆频道,#genre#"] + sort_data(xinjiang_dictionary, list(set(correct_name_data(corrections_name, xinjiang_lines)))) + ['\n'] + \
+        ["🏝️海南频道,#genre#"] + sort_data(hainan_dictionary, list(set(correct_name_data(corrections_name, hainan_lines)))) + ['\n'] + \
+        ["🕌宁夏频道,#genre#"] + sort_data(ningxia_dictionary, list(set(correct_name_data(corrections_name, ningxia_lines)))) + ['\n'] + \
+        ["🐑青海频道,#genre#"] + sort_data(qinghai_dictionary, list(set(correct_name_data(corrections_name, qinghai_lines)))) + ['\n'] + \
+        ["🐐西藏频道,#genre#"] + sort_data(xizang_dictionary, list(set(correct_name_data(corrections_name, xizang_lines)))) + ['\n'] + \
+        ["🇭🇰香港频道,#genre#"] + sort_data(hongkong_dictionary, list(set(correct_name_data(corrections_name, hongkong_lines)))) + ['\n'] + \
+        ["🇲🇴澳门频道,#genre#"] + sort_data(macau_dictionary, list(set(correct_name_data(corrections_name, macau_lines)))) + ['\n'] + \
+        ["🇨🇳台湾频道,#genre#"] + sort_data(taiwan_dictionary, list(set(correct_name_data(corrections_name, taiwan_lines)))) + ['\n'] + \
+        ["🇨🇳中国综合,#genre#"] + sort_data(china_dictionary, list(set(correct_name_data(corrections_name, china_lines)))) + ['\n'] + \
+        ["🌐国际频道,#genre#"] + sort_data(international_dictionary, list(set(correct_name_data(corrections_name, international_lines)))) + ['\n'] + \
+        ["📶数字频道,#genre#"] + sort_data(digital_dictionary, list(set(correct_name_data(corrections_name, digital_lines)))) + ['\n'] + \
+        ["🎬电影频道,#genre#"] + sort_data(movie_dictionary, list(set(correct_name_data(corrections_name, movie_lines)))) + ['\n'] + \
+        ["📺电·视·剧,#genre#"] + sort_data(tv_drama_dictionary, list(set(correct_name_data(corrections_name, tv_drama_lines)))) + ['\n'] + \
+        ["🦊动·画·片,#genre#"] + sort_data(cartoon_dictionary, list(set(correct_name_data(corrections_name, cartoon_lines)))) + ['\n'] + \
+        ["📽️纪·录·片,#genre#"] + sort_data(documentary_dictionary, list(set(correct_name_data(corrections_name, documentary_lines)))) + ['\n'] + \
+        ["📻收·音·机,#genre#"] + sort_data(radio_dictionary, list(set(correct_name_data(corrections_name, radio_lines)))) + ['\n'] + \
+        ["🐯虎牙直播,#genre#"] + sort_data(huya_dictionary, list(set(correct_name_data(corrections_name, huya_lines)))) + ['\n'] + \
+        ["🐠斗鱼直播,#genre#"] + sort_data(douyu_dictionary, list(set(correct_name_data(corrections_name, douyu_lines)))) + ['\n'] + \
+        ["🎤解说频道,#genre#"] + sort_data(commentary_dictionary, list(set(correct_name_data(corrections_name, commentary_lines)))) + ['\n'] + \
+        ["🎵音乐频道,#genre#"] + sort_data(music_dictionary, list(set(correct_name_data(corrections_name, music_lines)))) + ['\n'] + \
+        ["🍜美食频道,#genre#"] + sort_data(food_dictionary, list(set(correct_name_data(corrections_name, food_lines)))) + ['\n'] + \
+        ["✈️旅游频道,#genre#"] + sort_data(travel_dictionary, list(set(correct_name_data(corrections_name, travel_lines)))) + ['\n'] + \
+        ["🏥健康频道,#genre#"] + sort_data(health_dictionary, list(set(correct_name_data(corrections_name, health_lines)))) + ['\n'] + \
+        ["📰新闻频道,#genre#"] + sort_data(news_dictionary, list(set(correct_name_data(corrections_name, news_lines)))) + ['\n'] + \
+        ["💰财经频道,#genre#"] + sort_data(finance_dictionary, list(set(correct_name_data(corrections_name, finance_lines)))) + ['\n'] + \
+        ["🛍️购物频道,#genre#"] + sort_data(shopping_dictionary, list(set(correct_name_data(corrections_name, shopping_lines)))) + ['\n'] + \
+        ["🎮游戏频道,#genre#"] + sort_data(game_dictionary,set(correct_name_data(corrections_name,game_lines))) + ['\n'] + \
+        ["🎭戏曲频道,#genre#"] + sorted(set(correct_name_data(corrections_name, traditional_opera_lines))) + ['\n'] + \
+        ["🎭综艺频道,#genre#"] + sorted(set(correct_name_data(corrections_name, variety_lines))) + ['\n'] + \
+        ["🧨历届春晚,#genre#"] + sort_data(spring_festival_gala_dictionary,list(set(spring_festival_gala_lines)))  + ['\n'] + \
+        ["⭐收藏频道,#genre#"] + sort_data(favorite_dictionary, list(set(correct_name_data(corrections_name, favorite_lines)))) + ['\n'] + \
+        ["⚽️体育频道,#genre#"] + sort_data(sports_dictionary,set(correct_name_data(corrections_name,sports_lines))) + ['\n'] + \
         ["🏆️体育赛事,#genre#"] + normalized_tyss_lines + ['\n'] + \
         ["🏈咪咕赛事,#genre#"] + mgss_lines + ['\n'] + \
-        ["🇭🇰香港频道,#genre#"] + sort_data(hongkong_dictionary, correct_name_data(corrections_name, hongkong_lines)) + ['\n'] + \
-        ["🇲🇴澳门频道,#genre#"] + sort_data(macau_dictionary, correct_name_data(corrections_name, macau_lines)) + ['\n'] + \
-        ["🇨🇳台湾频道,#genre#"] + sort_data(taiwan_dictionary, correct_name_data(corrections_name, taiwan_lines)) + ['\n'] + \
-        ["🔢数字频道,#genre#"] + sort_data(digital_dictionary, correct_name_data(corrections_name, digital_lines)) + ['\n'] + \
-        ["🎬电影频道,#genre#"] + sort_data(movie_dictionary, correct_name_data(corrections_name, movie_lines)) + ['\n'] + \
-        ["📺电·视·剧,#genre#"] + sort_data(tv_drama_dictionary,correct_name_data(corrections_name,tv_drama_lines)) + ['\n'] + \
-        ["🐱动·画·片,#genre#"] + sort_data(cartoon_dictionary,set(correct_name_data(corrections_name,cartoon_lines)))+ ['\n'] + \
-        ["🎥纪·录·片,#genre#"] + sort_data(documentary_dictionary,set(correct_name_data(corrections_name,documentary_lines)))+ ['\n'] + \
-        ["📻收·音·机,#genre#"] + sort_data(radio_dictionary,set(radio_lines))  + ['\n'] + \
-        ["🎭综艺频道,#genre#"] + sorted(set(correct_name_data(corrections_name, variety_lines))) + ['\n'] + \
-        ["🐯虎牙直播,#genre#"] + sort_data(huya_dictionary, correct_name_data(corrections_name, huya_lines)) + ['\n'] + \
-        ["🐠斗鱼直播,#genre#"] + sort_data(douyu_dictionary, correct_name_data(corrections_name, douyu_lines)) + ['\n'] + \
-        ["🎤解说频道,#genre#"] + sorted(set(commentary_lines)) + ['\n'] + \
-        ["🎵音乐频道,#genre#"] + sorted(set(music_lines)) + ['\n'] + \
-        ["🍜美食频道,#genre#"] + sort_data(food_dictionary, correct_name_data(corrections_name, food_lines)) + ['\n'] + \
-        ["✈️旅游频道,#genre#"] + sort_data(travel_dictionary, correct_name_data(corrections_name, travel_lines)) + ['\n'] + \
-        ["🏥健康频道,#genre#"] + sort_data(health_dictionary, correct_name_data(corrections_name, health_lines)) + ['\n'] + \
-        ["💰财经频道,#genre#"] + sort_data(finance_dictionary, correct_name_data(corrections_name, finance_lines)) + ['\n'] + \
-        ["🛍️购物频道,#genre#"] + sort_data(shopping_dictionary, correct_name_data(corrections_name, shopping_lines)) + ['\n'] + \
-        ["🎮游戏频道,#genre#"] + sorted(set(game_lines)) + ['\n'] + \
-        ["📰新闻频道,#genre#"] + sort_data(news_dictionary, correct_name_data(corrections_name, news_lines)) + ['\n'] + \
-        ["🇨🇳中国综合,#genre#"] + sort_data(china_dictionary, correct_name_data(corrections_name, china_lines)) + ['\n'] + \
-        ["🌐国际频道,#genre#"] + sort_data(international_dictionary, correct_name_data(corrections_name, international_lines)) + ['\n'] + \
-        ["🏀体育频道,#genre#"] + sort_data(sports_dictionary,correct_name_data(corrections_name,sports_lines)) + ['\n'] + \
-        ["🎭戏曲频道,#genre#"] + sort_data(traditional_opera_dictionary, correct_name_data(corrections_name, traditional_opera_lines)) + ['\n'] + \
-        ["🧨历届春晚,#genre#"] + sort_data(spring_festival_gala_dictionary,set(spring_festival_gala_lines))  + ['\n'] + \
+        ["👑专享央视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质央视.txt') + ['\n'] + \
+        ["☕️专享卫视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质卫视.txt') + ['\n'] + \
         ["🏞️景区直播,#genre#"] + sorted(set(correct_name_data(corrections_name,camera_lines))) + ['\n'] + \
-        ["⭐收藏频道,#genre#"] + sort_data(favorite_dictionary, correct_name_data(corrections_name, favorite_lines)) + ['\n'] + \
         ["📦其他频道,#genre#"] + sorted(set(other_lines)) + ['\n'] + \
         ["🕒更新时间,#genre#"] + [version] + [about] + [MTV1] + [MTV2] + [MTV3] + [MTV4] + [MTV5] + read_txt_to_array('assets/livesource/手工区/about.txt') + ['\n']
 
 # 构建精简版播放列表
-all_lines_lite =  ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary,correct_name_data(corrections_name,yangshi_lines)) + ['\n'] + \
-        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary,correct_name_data(corrections_name,weishi_lines)) + ['\n'] + \
+playlist_lite =  ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary,correct_name_data(corrections_name,yangshi_lines)) + ['\n'] + \
+        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary,set(correct_name_data(corrections_name,weishi_lines))) + ['\n'] + \
+        ["🏠地·方·台,#genre#"] + \
+        sort_data(beijing_dictionary, list(set(correct_name_data(corrections_name, beijing_lines)))) + \
+        sort_data(shanghai_dictionary, list(set(correct_name_data(corrections_name, shanghai_lines)))) + \
+        sort_data(guangdong_dictionary, list(set(correct_name_data(corrections_name, guangdong_lines)))) + \
+        sort_data(jiangsu_dictionary, list(set(correct_name_data(corrections_name, jiangsu_lines)))) + \
+        sort_data(zhejiang_dictionary, list(set(correct_name_data(corrections_name, zhejiang_lines)))) + \
+        sort_data(shandong_dictionary, list(set(correct_name_data(corrections_name, shandong_lines)))) + \
+        sort_data(sichuan_dictionary, list(set(correct_name_data(corrections_name, sichuan_lines)))) + \
+        sort_data(henan_dictionary, list(set(correct_name_data(corrections_name,henan_lines)))) + \
+        sort_data(hunan_dictionary, list(set(correct_name_data(corrections_name,hunan_lines)))) + \
+        sort_data(chongqing_dictionary, list(set(correct_name_data(corrections_name, chongqing_lines)))) + \
+        sort_data(tianjin_dictionary, list(set(correct_name_data(corrections_name, tianjin_lines)))) + \
+        sort_data(hubei_dictionary, list(set(correct_name_data(corrections_name,hubei_lines)))) + \
+        sort_data(anhui_dictionary, list(set(correct_name_data(corrections_name, anhui_lines)))) + \
+        sort_data(fujian_dictionary, list(set(correct_name_data(corrections_name, fujian_lines)))) + \
+        sort_data(liaoning_dictionary, list(set(correct_name_data(corrections_name, liaoning_lines)))) + \
+        sort_data(shaanxi_dictionary, list(set(correct_name_data(corrections_name, shaanxi_lines)))) + \
+        sort_data(hebei_dictionary, list(set(correct_name_data(corrections_name, hebei_lines)))) + \
+        sort_data(jiangxi_dictionary, list(set(correct_name_data(corrections_name, jiangxi_lines)))) + \
+        sort_data(guangxi_dictionary,list(set(correct_name_data(corrections_name,guangxi_lines)))) + \
+        sort_data(yunnan_dictionary, list(set(correct_name_data(corrections_name, yunnan_lines)))) + \
+        sort_data(shanxi_dictionary, list(set(correct_name_data(corrections_name, shanxi_lines)))) + \
+        sort_data(heilongjiang_dictionary, list(set(correct_name_data(corrections_name, heilongjiang_lines)))) + \
+        sort_data(jilin_dictionary, list(set(correct_name_data(corrections_name, jilin_lines)))) + \
+        sort_data(guizhou_dictionary, list(set(correct_name_data(corrections_name, guizhou_lines)))) + \
+        sort_data(gansu_dictionary, list(set(correct_name_data(corrections_name, gansu_lines)))) + \
+        sort_data(neimenggu_dictionary, list(set(correct_name_data(corrections_name, neimenggu_lines)))) + \
+        sort_data(xinjiang_dictionary, list(set(correct_name_data(corrections_name, xinjiang_lines)))) + \
+        sort_data(hainan_dictionary, list(set(correct_name_data(corrections_name, hainan_lines)))) + \
+        sort_data(ningxia_dictionary, list(set(correct_name_data(corrections_name, ningxia_lines)))) + \
+        sort_data(qinghai_dictionary, list(set(correct_name_data(corrections_name, qinghai_lines)))) + \
+        sort_data(xizang_dictionary, list(set(correct_name_data(corrections_name, xizang_lines)))) + \
+        ['\n'] + \
         ["🕒更新时间,#genre#"] + [version] + [about] + [MTV1] + [MTV2] + [MTV3] + [MTV4] + [MTV5] + read_txt_to_array('assets/livesource/手工区/about.txt') + ['\n']
 
 # 构建定制版播放列表
-all_lines_custom = ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary, correct_name_data(corrections_name, yangshi_lines)) + ['\n'] + \
-        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary, correct_name_data(corrections_name, weishi_lines)) + ['\n'] + \
-        ["☕️专享央视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质央视.txt') + ['\n'] + \
-        ["🍹专享卫视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质卫视.txt') + ['\n'] + \
-        ["⚽️SPORTS,#genre#"] + read_txt_to_array('assets/livesource/手工区/sports.txt') + ['\n'] + \
+playlist_custom = ["🌐央视频道,#genre#"] + sort_data(yangshi_dictionary, correct_name_data(corrections_name,yangshi_lines)) + ['\n'] + \
+        ["📡卫视频道,#genre#"] + sort_data(weishi_dictionary,set(correct_name_data(corrections_name,weishi_lines))) + ['\n'] + \
+        ["🏠地·方·台,#genre#"] + \
+        sort_data(beijing_dictionary, list(set(correct_name_data(corrections_name, beijing_lines)))) + \
+        sort_data(shanghai_dictionary, list(set(correct_name_data(corrections_name, shanghai_lines)))) + \
+        sort_data(guangdong_dictionary, list(set(correct_name_data(corrections_name, guangdong_lines)))) + \
+        sort_data(jiangsu_dictionary, list(set(correct_name_data(corrections_name, jiangsu_lines)))) + \
+        sort_data(zhejiang_dictionary, list(set(correct_name_data(corrections_name, zhejiang_lines)))) + \
+        sort_data(shandong_dictionary, list(set(correct_name_data(corrections_name, shandong_lines)))) + \
+        sort_data(sichuan_dictionary, list(set(correct_name_data(corrections_name, sichuan_lines)))) + \
+        sort_data(henan_dictionary, list(set(correct_name_data(corrections_name,henan_lines)))) + \
+        sort_data(hunan_dictionary, list(set(correct_name_data(corrections_name,hunan_lines)))) + \
+        sort_data(chongqing_dictionary, list(set(correct_name_data(corrections_name, chongqing_lines)))) + \
+        sort_data(tianjin_dictionary, list(set(correct_name_data(corrections_name, tianjin_lines)))) + \
+        sort_data(hubei_dictionary, list(set(correct_name_data(corrections_name,hubei_lines)))) + \
+        sort_data(anhui_dictionary, list(set(correct_name_data(corrections_name, anhui_lines)))) + \
+        sort_data(fujian_dictionary, list(set(correct_name_data(corrections_name, fujian_lines)))) + \
+        sort_data(liaoning_dictionary, list(set(correct_name_data(corrections_name, liaoning_lines)))) + \
+        sort_data(shaanxi_dictionary, list(set(correct_name_data(corrections_name, shaanxi_lines)))) + \
+        sort_data(hebei_dictionary, list(set(correct_name_data(corrections_name, hebei_lines)))) + \
+        sort_data(jiangxi_dictionary, list(set(correct_name_data(corrections_name, jiangxi_lines)))) + \
+        sort_data(guangxi_dictionary,list(set(correct_name_data(corrections_name,guangxi_lines)))) + \
+        sort_data(yunnan_dictionary, list(set(correct_name_data(corrections_name, yunnan_lines)))) + \
+        sort_data(shanxi_dictionary, list(set(correct_name_data(corrections_name, shanxi_lines)))) + \
+        sort_data(heilongjiang_dictionary, list(set(correct_name_data(corrections_name, heilongjiang_lines)))) + \
+        sort_data(jilin_dictionary, list(set(correct_name_data(corrections_name, jilin_lines)))) + \
+        sort_data(guizhou_dictionary, list(set(correct_name_data(corrections_name, guizhou_lines)))) + \
+        sort_data(gansu_dictionary, list(set(correct_name_data(corrections_name, gansu_lines)))) + \
+        sort_data(neimenggu_dictionary, list(set(correct_name_data(corrections_name, neimenggu_lines)))) + \
+        sort_data(xinjiang_dictionary, list(set(correct_name_data(corrections_name, xinjiang_lines)))) + \
+        sort_data(hainan_dictionary, list(set(correct_name_data(corrections_name, hainan_lines)))) + \
+        sort_data(ningxia_dictionary, list(set(correct_name_data(corrections_name, ningxia_lines)))) + \
+        sort_data(qinghai_dictionary, list(set(correct_name_data(corrections_name, qinghai_lines)))) + \
+        sort_data(xizang_dictionary, list(set(correct_name_data(corrections_name, xizang_lines)))) + \
+        ['\n'] + \
+        ["🇭🇰香港频道,#genre#"] + sort_data(hongkong_dictionary, list(set(correct_name_data(corrections_name, hongkong_lines)))) + ['\n'] + \
+        ["🇲🇴澳门频道,#genre#"] + sort_data(macau_dictionary, list(set(correct_name_data(corrections_name, macau_lines)))) + ['\n'] + \
+        ["🇨🇳台湾频道,#genre#"] + sort_data(taiwan_dictionary, list(set(correct_name_data(corrections_name, taiwan_lines)))) + ['\n'] + \
+        ["🇨🇳中国综合,#genre#"] + sort_data(china_dictionary, list(set(correct_name_data(corrections_name, china_lines)))) + ['\n'] + \
+        ["🌐国际频道,#genre#"] + sort_data(international_dictionary, list(set(correct_name_data(corrections_name, international_lines)))) + ['\n'] + \
+        ["📶数字频道,#genre#"] + sort_data(digital_dictionary, list(set(correct_name_data(corrections_name, digital_lines)))) + ['\n'] + \
+        ["🎬电影频道,#genre#"] + sort_data(movie_dictionary, list(set(correct_name_data(corrections_name, movie_lines)))) + ['\n'] + \
+        ["📺电·视·剧,#genre#"] + sort_data(tv_drama_dictionary, list(set(correct_name_data(corrections_name, tv_drama_lines)))) + ['\n'] + \
+        ["🦊动·画·片,#genre#"] + sort_data(cartoon_dictionary, list(set(correct_name_data(corrections_name, cartoon_lines)))) + ['\n'] + \
+        ["📽️纪·录·片,#genre#"] + sort_data(documentary_dictionary, list(set(correct_name_data(corrections_name, documentary_lines)))) + ['\n'] + \
+        ["📻收·音·机,#genre#"] + sort_data(radio_dictionary, list(set(correct_name_data(corrections_name, radio_lines)))) + ['\n'] + \
+        ["🐯虎牙直播,#genre#"] + sort_data(huya_dictionary, list(set(correct_name_data(corrections_name, huya_lines)))) + ['\n'] + \
+        ["🐠斗鱼直播,#genre#"] + sort_data(douyu_dictionary, list(set(correct_name_data(corrections_name, douyu_lines)))) + ['\n'] + \
+        ["🎤解说频道,#genre#"] + sort_data(commentary_dictionary, list(set(correct_name_data(corrections_name, commentary_lines)))) + ['\n'] + \
+        ["🎵音乐频道,#genre#"] + sort_data(music_dictionary, list(set(correct_name_data(corrections_name, music_lines)))) + ['\n'] + \
+        ["🍜美食频道,#genre#"] + sort_data(food_dictionary, list(set(correct_name_data(corrections_name, food_lines)))) + ['\n'] + \
+        ["✈️旅游频道,#genre#"] + sort_data(travel_dictionary, list(set(correct_name_data(corrections_name, travel_lines)))) + ['\n'] + \
+        ["🏥健康频道,#genre#"] + sort_data(health_dictionary, list(set(correct_name_data(corrections_name, health_lines)))) + ['\n'] + \
+        ["📰新闻频道,#genre#"] + sort_data(news_dictionary, list(set(correct_name_data(corrections_name, news_lines)))) + ['\n'] + \
+        ["💰财经频道,#genre#"] + sort_data(finance_dictionary, list(set(correct_name_data(corrections_name, finance_lines)))) + ['\n'] + \
+        ["🛍️购物频道,#genre#"] + sort_data(shopping_dictionary, list(set(correct_name_data(corrections_name, shopping_lines)))) + ['\n'] + \
+        ["🎮游戏频道,#genre#"] + sort_data(game_dictionary,set(correct_name_data(corrections_name,game_lines))) + ['\n'] + \
+        ["🎭戏曲频道,#genre#"] + sorted(set(correct_name_data(corrections_name, traditional_opera_lines))) + ['\n'] + \
+        ["🎭综艺频道,#genre#"] + sorted(set(correct_name_data(corrections_name, variety_lines))) + ['\n'] + \
+        ["🧨历届春晚,#genre#"] + sort_data(spring_festival_gala_dictionary,list(set(spring_festival_gala_lines)))  + ['\n'] + \
+        ["⭐收藏频道,#genre#"] + sort_data(favorite_dictionary, list(set(correct_name_data(corrections_name, favorite_lines)))) + ['\n'] + \
+        ["⚽️体育频道,#genre#"] + sort_data(sports_dictionary,set(correct_name_data(corrections_name,sports_lines))) + ['\n'] + \
         ["🏆️体育赛事,#genre#"] + normalized_tyss_lines + ['\n'] + \
         ["🏈咪咕赛事,#genre#"] + mgss_lines + ['\n'] + \
-        ["🇭🇰香港频道,#genre#"] + sort_data(hongkong_dictionary, correct_name_data(corrections_name, hongkong_lines)) + ['\n'] + \
-        ["🇲🇴澳门频道,#genre#"] + sort_data(macau_dictionary, correct_name_data(corrections_name, macau_lines)) + ['\n'] + \
-        ["🇨🇳台湾频道,#genre#"] + sort_data(taiwan_dictionary, correct_name_data(corrections_name, taiwan_lines)) + ['\n'] + \
-        ["🔢数字频道,#genre#"] + sort_data(digital_dictionary, correct_name_data(corrections_name, digital_lines)) + ['\n'] + \
-        ["🎬电影频道,#genre#"] + sort_data(movie_dictionary, correct_name_data(corrections_name, movie_lines)) + ['\n'] + \
-        ["📺电·视·剧,#genre#"] + sort_data(tv_drama_dictionary,correct_name_data(corrections_name,tv_drama_lines)) + ['\n'] + \
-        ["🐱动·画·片,#genre#"] + sort_data(cartoon_dictionary,set(correct_name_data(corrections_name,cartoon_lines)))+ ['\n'] + \
-        ["🎥纪·录·片,#genre#"] + sort_data(documentary_dictionary,set(correct_name_data(corrections_name,documentary_lines)))+ ['\n'] + \
-        ["📻收·音·机,#genre#"] + sort_data(radio_dictionary,set(radio_lines))  + ['\n'] + \
-        ["🎭综艺频道,#genre#"] + sorted(set(correct_name_data(corrections_name, variety_lines))) + ['\n'] + \
-        ["🐯虎牙直播,#genre#"] + sort_data(huya_dictionary, correct_name_data(corrections_name, huya_lines)) + ['\n'] + \
-        ["🐠斗鱼直播,#genre#"] + sort_data(douyu_dictionary, correct_name_data(corrections_name, douyu_lines)) + ['\n'] + \
-        ["🎤解说频道,#genre#"] + sorted(set(commentary_lines)) + ['\n'] + \
-        ["🎵音乐频道,#genre#"] + sorted(set(music_lines)) + ['\n'] + \
-        ["🍜美食频道,#genre#"] + sort_data(food_dictionary, correct_name_data(corrections_name, food_lines)) + ['\n'] + \
-        ["✈️旅游频道,#genre#"] + sort_data(travel_dictionary, correct_name_data(corrections_name, travel_lines)) + ['\n'] + \
-        ["🏥健康频道,#genre#"] + sort_data(health_dictionary, correct_name_data(corrections_name, health_lines)) + ['\n'] + \
-        ["💰财经频道,#genre#"] + sort_data(finance_dictionary, correct_name_data(corrections_name, finance_lines)) + ['\n'] + \
-        ["🛍️购物频道,#genre#"] + sort_data(shopping_dictionary, correct_name_data(corrections_name, shopping_lines)) + ['\n'] + \
-        ["🎮游戏频道,#genre#"] + sorted(set(game_lines)) + ['\n'] + \
-        ["📰新闻频道,#genre#"] + sort_data(news_dictionary, correct_name_data(corrections_name, news_lines)) + ['\n'] + \
-        ["🇨🇳中国综合,#genre#"] + sort_data(china_dictionary, correct_name_data(corrections_name, china_lines)) + ['\n'] + \
-        ["🌐国际频道,#genre#"] + sort_data(international_dictionary, correct_name_data(corrections_name, international_lines)) + ['\n'] + \
-        ["🏀体育频道,#genre#"] + sort_data(sports_dictionary,correct_name_data(corrections_name,sports_lines)) + ['\n'] + \
-        ["🎭戏曲频道,#genre#"] + sort_data(traditional_opera_dictionary, correct_name_data(corrections_name, traditional_opera_lines)) + ['\n'] + \
-        ["🧨历届春晚,#genre#"] + sort_data(spring_festival_gala_dictionary,set(spring_festival_gala_lines))  + ['\n'] + \
+        ["👑专享央视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质央视.txt') + ['\n'] + \
+        ["☕️专享卫视,#genre#"] + read_txt_to_array('assets/livesource/手工区/优质卫视.txt') + ['\n'] + \
         ["🏞️景区直播,#genre#"] + sorted(set(correct_name_data(corrections_name,camera_lines))) + ['\n'] + \
-        ["⭐收藏频道,#genre#"] + sort_data(favorite_dictionary, correct_name_data(corrections_name, favorite_lines)) + ['\n'] + \
         ["📦其他频道,#genre#"] + sorted(set(other_lines)) + ['\n'] + \
         ["🕒更新时间,#genre#"] + [version] + [about] + [MTV1] + [MTV2] + [MTV3] + [MTV4] + [MTV5] + read_txt_to_array('assets/livesource/手工区/about.txt') + ['\n']
 
@@ -1074,17 +1145,17 @@ output_custom = "output/custom.txt"
 # 写入文件
 try:
     with open(output_full, 'w', encoding='utf-8') as f:
-        for line in all_lines_full:
+        for line in playlist_full:
             f.write(line + '\n')
     print(f"✅ 完整版播放列表已保存: {output_full}")
 
     with open(output_lite, 'w', encoding='utf-8') as f:
-        for line in all_lines_lite:
+        for line in playlist_lite:
             f.write(line + '\n')
     print(f"✅ 精简版播放列表已保存: {output_lite}")
 
     with open(output_custom, 'w', encoding='utf-8') as f:
-        for line in all_lines_custom:
+        for line in playlist_custom:
             f.write(line + '\n')
     print(f"✅ 定制版播放列表已保存: {output_custom}")
 
@@ -1143,30 +1214,103 @@ make_m3u(output_full, output_full.replace(".txt", ".m3u"))
 make_m3u(output_lite, output_lite.replace(".txt", ".m3u"))
 make_m3u(output_custom, output_custom.replace(".txt", ".m3u"))
 
-print("📊 生成统计信息")
-# 计算脚本执行时间
+# ========= 统计信息 =========
+
+# 计算执行时间
+print(f"\n📊 处理统计")
 timeend = datetime.now()
 elapsed_time = timeend - timestart
 total_seconds = elapsed_time.total_seconds()
 minutes = int(total_seconds // 60)
 seconds = int(total_seconds % 60)
+print(f"   开始时间: {timestart.strftime('%Y%m%d %H:%M:%S')}")
+print(f"   结束时间: {timeend.strftime('%Y%m%d %H:%M:%S')}")
+print(f"   执行时间: {minutes} 分 {seconds} 秒")
 
-# 格式化时间字符串
-timestart_str = timestart.strftime("%Y%m%d %H:%M:%S")
-timeend_str = timeend.strftime("%Y%m%d %H:%M:%S")
+# 频道数据统计
+print(f"\n📈 数据统计")
+print(f"   黑名单条数: {len(combined_blacklist)}")
+print(f"   其他源条数: {len(other_lines)}")
+print(f"   完整版条数: {len(playlist_full)}")
+print(f"   精简版条数: {len(playlist_lite)}")
+print(f"   定制版条数: {len(playlist_custom)}")
 
-print(f"开始时间: {timestart_str}")
-print(f"结束时间: {timeend_str}")
-print(f"执行时间: {minutes} 分 {seconds} 秒")
+# 频道分类统计
+print(f"\n📝 分类统计:")
 
-# 统计信息
-combined_blacklist_hj = len(combined_blacklist)
-all_lines_full_hj = len(all_lines_full)
-other_lines_hj = len(other_lines)
-print(f"黑名单行数: {combined_blacklist_hj} ")
-print(f"完整版行数: {all_lines_full_hj} ")
-print(f"其它源行数: {other_lines_hj} ")
+print(f"📺 主·频·道")
+print(f"   🌐 央视频道: {len(yangshi_lines)}")
+print(f"   📡 卫视频道: {len(weishi_lines)}")
 
-print("✅ 处理完成!")
+print(f"🏠 地·方·台")
+print(f"   🏛️ 北京频道: {len(beijing_lines)}")
+print(f"   🏙️ 上海频道: {len(shanghai_lines)}")
+print(f"   🦁 广东频道: {len(guangdong_lines)}")
+print(f"   🍃 江苏频道: {len(jiangsu_lines)}")
+print(f"   🧵 浙江频道: {len(zhejiang_lines)}")
+print(f"   ⛰️ 山东频道: {len(shandong_lines)}")
+print(f"   🐼 四川频道: {len(sichuan_lines)}")
+print(f"   ⚔️ 河南频道: {len(henan_lines)}")
+print(f"   🌶️ 湖南频道: {len(hunan_lines)}")
+print(f"   🍲 重庆频道: {len(chongqing_lines)}")
+print(f"   🚢 天津频道: {len(tianjin_lines)}")
+print(f"   🌉 湖北频道: {len(hubei_lines)}")
+print(f"   🌾 安徽频道: {len(anhui_lines)}")
+print(f"   🌊 福建频道: {len(fujian_lines)}")
+print(f"   🏭 辽宁频道: {len(liaoning_lines)}")
+print(f"   🗿 陕西频道: {len(shaanxi_lines)}")
+print(f"   ⛩️ 河北频道: {len(hebei_lines)}")
+print(f"   🍶 江西频道: {len(jiangxi_lines)}")
+print(f"   💃 广西频道: {len(guangxi_lines)}")
+print(f"   ☁️ 云南频道: {len(yunnan_lines)}")
+print(f"   🏮 山西频道: {len(shanxi_lines)}")
+print(f"   ❄️ 黑·龙·江: {len(heilongjiang_lines)}")
+print(f"   🎎 吉林频道: {len(jilin_lines)}")
+print(f"   🌈 贵州频道: {len(guizhou_lines)}")
+print(f"   🐫 甘肃频道: {len(gansu_lines)}")
+print(f"   🐎 内·蒙·古: {len(neimenggu_lines)}")
+print(f"   🍇 新疆频道: {len(xinjiang_lines)}")
+print(f"   🏝️ 海南频道: {len(hainan_lines)}")
+print(f"   🕌 宁夏频道: {len(ningxia_lines)}")
+print(f"   🐑 青海频道: {len(qinghai_lines)}")
+print(f"   🐐 西藏频道: {len(xizang_lines)}")
+
+print(f"🇭🇰 港·澳·台")
+print(f"   🇭🇰 香港频道: {len(hongkong_lines)}")
+print(f"   🇲🇴 澳门频道: {len(macau_lines)}")
+print(f"   🇨🇳 台湾频道: {len(taiwan_lines)}")
+
+print(f"👑 定·制·台")
+print(f"   📶 数字频道: {len(digital_lines)}")
+print(f"   🎬 电影频道: {len(movie_lines)}")
+print(f"   📺 电·视·剧: {len(tv_drama_lines)}")
+print(f"   📽️ 纪·录·片: {len(documentary_lines)}")
+print(f"   🦊 动·画·片: {len(cartoon_lines)}")
+print(f"   📻 收·音·机: {len(radio_lines)}")
+print(f"   🎭 综艺频道: {len(variety_lines)}")
+print(f"   🐯 虎牙频道: {len(huya_lines)}")
+print(f"   🐠 斗鱼频道: {len(douyu_lines)}")
+print(f"   🎤 解说频道: {len(commentary_lines)}")
+print(f"   🎵 音乐频道: {len(music_lines)}")
+print(f"   🍜 美食频道: {len(food_lines)}")
+print(f"   ✈️ 旅游频道: {len(travel_lines)}")
+print(f"   🏥 健康频道: {len(health_lines)}")
+print(f"   💰 财经频道: {len(finance_lines)}")
+print(f"   🛍️ 购物频道: {len(shopping_lines)}")
+print(f"   🎮 游戏频道: {len(game_lines)}")
+print(f"   📰 新闻频道: {len(news_lines)}")
+print(f"   🇨🇳 中国频道: {len(china_lines)}")
+print(f"   🌐 国际频道: {len(international_lines)}")
+print(f"   ⚽️ 体育频道: {len(sports_lines)}")
+print(f"   🏆️ 体育赛事: {len(filtered_tyss_lines)}")
+print(f"   🏈 咪咕赛事: {len(mgss_lines)}")
+print(f"   🎭 戏曲频道: {len(traditional_opera_lines)}")
+print(f"   🧨 历届春晚: {len(spring_festival_gala_lines)}")
+print(f"   🏞️ 景区直播: {len(camera_lines)}")
+print(f"   ⭐ 收藏频道: {len(favorite_lines)}")
+
+print(f"\n📦 其他未分类: {len(other_lines)}")
+
+print("\n🎉🎉🎉 全部处理完成!✅🚀")
 
 # ====== 直播源聚合处理工具 v1.00 ======
