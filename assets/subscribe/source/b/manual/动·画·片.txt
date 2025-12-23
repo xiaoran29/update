@@ -2,7 +2,6 @@
 
 动画片,https://gcalic.v.myalicdn.com/gc/wgw05_1/index.m3u8?contentid=2820180516001
 葫芦兄弟,http://jsmov2.a.yximgs.com/bs3/video-hls/5223049779458999093_hlsb.m3u8
-动画片,https://gcalic.v.myalicdn.com/gc/wgw05_1/index.m3u8?contentid=2820180516001
 小星星,https://resource-cdn.tuxiaobei.com/video/a8/6d/a86d08f2d34678c34fc14013f9a5653b.mp4
 摇篮曲,https://resource-cdn.tuxiaobei.com/video/b0/2a/b02a4759b042faf57a8314a52fcb76e7.mp4
 小白船,https://resource-cdn.tuxiaobei.com/video/01/0f/010f90d65bea7cfc5a2d45ff66cb8d99.mp4

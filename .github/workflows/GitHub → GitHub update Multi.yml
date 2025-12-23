@@ -1,5 +1,6 @@
-name: Cross Repository Multi-Platform Sync 🔄
-
+name: '🔀 GitHub → GitHub 67→37 update'
+# Cross Repository Multi-Platform Sync
+# 跨仓库多平台同步（增量+覆盖）🔄🔀♻️⚡🚀🌐🔧✅
 on:
   workflow_dispatch:
     inputs:
@@ -13,7 +14,7 @@ on:
       source_folder:
         description: '源文件夹路径（多级目录用/分隔，留空=根目录）'
         required: false
-        default: 'output'
+        default: ''
         type: string
       
       source_token:
@@ -32,7 +33,7 @@ on:
       target_folder:
         description: '目标文件夹路径（多级目录用/分隔，留空=根目录）'
         required: false
-        default: 'output'
+        default: ''
         type: string
       
       target_token:
@@ -53,7 +54,7 @@ on:
 
       # ==================== 同步策略 ====================
       sync_mode:
-        description: '更新模式'
+        description: '同步模式'
         required: true
         type: choice
         options:
@@ -105,9 +106,32 @@ jobs:
             exit 1
           fi
           
+          # 清理并设置文件夹路径（处理空值和空格）
+          # 源文件夹处理
+          SOURCE_FOLDER=$(echo "${{ inputs.source_folder }}" | xargs)
+          if [ -z "$SOURCE_FOLDER" ] || [ "$SOURCE_FOLDER" = "." ]; then
+            echo "source_folder=" >> $GITHUB_ENV
+            echo "INFO: 源文件夹设置为空（根目录）"
+          else
+            # 移除开头和结尾的斜杠
+            SOURCE_FOLDER=$(echo "$SOURCE_FOLDER" | sed 's|^/||' | sed 's|/$||')
+            echo "source_folder=$SOURCE_FOLDER" >> $GITHUB_ENV
+            echo "INFO: 源文件夹设置为: $SOURCE_FOLDER"
+          fi
+          
+          # 目标文件夹处理
+          TARGET_FOLDER=$(echo "${{ inputs.target_folder }}" | xargs)
+          if [ -z "$TARGET_FOLDER" ] || [ "$TARGET_FOLDER" = "." ]; then
+            echo "target_folder=" >> $GITHUB_ENV
+            echo "INFO: 目标文件夹设置为空（根目录）"
+          else
+            # 移除开头和结尾的斜杠
+            TARGET_FOLDER=$(echo "$TARGET_FOLDER" | sed 's|^/||' | sed 's|/$||')
+            echo "target_folder=$TARGET_FOLDER" >> $GITHUB_ENV
+            echo "INFO: 目标文件夹设置为: $TARGET_FOLDER"
+          fi
+          
           # 设置其他变量
-          echo "source_folder=${{ inputs.source_folder }}" >> $GITHUB_ENV
-          echo "target_folder=${{ inputs.target_folder }}" >> $GITHUB_ENV
           echo "sync_mode=${{ inputs.sync_mode }}" >> $GITHUB_ENV
           echo "target_platform=${{ inputs.target_platform }}" >> $GITHUB_ENV
 
@@ -125,15 +149,50 @@ jobs:
           fi
           echo "✅ Token校验通过"
 
-      # 3. 安装必要工具
+      # 3. 检查/创建目标仓库（参考你提供代码的自动初始化功能）
+      - name: 📦 检查并创建目标仓库（仅GitHub）
+        if: env.target_platform == 'github'
+        run: |
+          echo "=== 检查目标仓库 ==="
+          TARGET_TOKEN="${{ secrets[inputs.target_token] }}"
+          
+          # 只对GitHub平台检查，其他平台不检查
+          REPO_CHECK_URL="https://api.github.com/repos/${{ env.target_user }}/${{ env.target_repo }}"
+          REPO_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $TARGET_TOKEN" "$REPO_CHECK_URL")
+          
+          if [ "$REPO_EXISTS" -eq 404 ]; then
+            echo "ℹ️ 目标仓库不存在，开始创建..."
+            CREATE_BODY=$(jq -n --arg name "${{ env.target_repo }}" \
+              '{"name": $name, "private": false, "auto_init": true, "default_branch": "main"}')
+            CREATE_RESPONSE=$(curl -s -w "%{http_code}" -o create_result.json \
+              -X POST \
+              -H "Authorization: token $TARGET_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/user/repos" \
+              -d "$CREATE_BODY")
+            
+            if [ "$CREATE_RESPONSE" -ne 201 ]; then
+              echo "❌ 目标仓库创建失败：$(cat create_result.json 2>/dev/null || echo '未知错误')"
+              echo "⚠️ 将继续尝试同步，如果失败请手动创建仓库"
+            else
+              echo "✅ 目标仓库创建成功"
+            fi
+          elif [ "$REPO_EXISTS" -eq 200 ]; then
+            echo "✅ 目标仓库已存在"
+          else
+            echo "⚠️ 检查仓库状态失败，HTTP码：$REPO_EXISTS"
+            echo "⚠️ 将继续尝试同步"
+          fi
+
+      # 4. 安装必要工具
       - name: 🛠️ 安装同步工具
         run: |
           echo "=== 安装工具 ==="
           sudo apt-get update
-          sudo apt-get install -y rsync tree
-          echo "✅ rsync安装完成"
+          sudo apt-get install -y rsync tree jq curl
+          echo "✅ 必要工具安装完成"
 
-      # 4. 检出源仓库
+      # 5. 检出源仓库
       - name: 📥 检出源仓库
         uses: actions/checkout@v4
         with:
@@ -141,9 +200,10 @@ jobs:
           ref: ${{ env.source_branch }}
           path: source_repo
           token: ${{ secrets[inputs.source_token] }}
-          fetch-depth: 1
+          fetch-depth: 0
+          clean: true
 
-      # 5. 准备目标仓库
+      # 6. 准备目标仓库
       - name: 📦 准备目标仓库
         run: |
           echo "=== 准备目标仓库 ==="
@@ -164,77 +224,99 @@ jobs:
           
           echo "目标仓库URL: $TARGET_URL"
           
-          # 克隆目标仓库
-          git clone --branch ${{ env.target_branch }} --depth=1 "$TARGET_URL" target_repo 2>/dev/null || {
-            echo "⚠️ 目标仓库不存在或克隆失败，尝试初始化..."
+          # 克隆目标仓库（添加容错处理）
+          set +e
+          git clone --branch ${{ env.target_branch }} --depth=1 "$TARGET_URL" target_repo 2>/dev/null
+          CLONE_STATUS=$?
+          set -e
+          
+          if [ $CLONE_STATUS -ne 0 ]; then
+            echo "⚠️ 目标仓库克隆失败，尝试初始化..."
+            rm -rf target_repo
             mkdir -p target_repo
             cd target_repo
             git init
             git remote add origin "$TARGET_URL"
-            git checkout -b ${{ env.target_branch }}
+            git checkout -b ${{ env.target_branch }} || git checkout -b main
             cd ..
-          }
+          else
+            echo "✅ 目标仓库克隆成功"
+          fi
           
           # 确保目标目录存在
-          mkdir -p "target_repo/${{ env.target_folder }}"
-          echo "✅ 目标仓库准备完成"
+          if [ -n "${{ env.target_folder }}" ]; then
+            mkdir -p "target_repo/${{ env.target_folder }}"
+          fi
 
-      # 6. 执行同步（核心逻辑）
-      - name: 🔄 执行文件同步
+      # 7. 执行同步（核心逻辑 - 改进版）
+      - name: 🔄 执行文件同步（时间戳+大小校验）
         id: sync_files
         run: |
           echo "=== 执行文件同步 ==="
           echo "同步模式: ${{ env.sync_mode }}"
           
-          # 构建源路径和目标路径
+          # 构建源路径和目标路径（处理空文件夹）
           SOURCE_PATH="source_repo"
           TARGET_PATH="target_repo"
           
-          [ -n "${{ env.source_folder }}" ] && SOURCE_PATH="source_repo/${{ env.source_folder }}"
-          [ -n "${{ env.target_folder }}" ] && TARGET_PATH="target_repo/${{ env.target_folder }}"
+          # 只有当文件夹参数非空时才添加子路径
+          if [ -n "${source_folder:+x}" ]; then
+            SOURCE_PATH="source_repo/${{ env.source_folder }}"
+          fi
+          
+          if [ -n "${target_folder:+x}" ]; then
+            TARGET_PATH="target_repo/${{ env.target_folder }}"
+          fi
           
           echo "源路径: $SOURCE_PATH"
           echo "目标路径: $TARGET_PATH"
           
           # 检查源路径是否存在
-          if [ ! -d "$SOURCE_PATH" ] && [ ! -f "$SOURCE_PATH" ]; then
+          if [ ! -e "$SOURCE_PATH" ]; then
             echo "❌ 源路径不存在: $SOURCE_PATH"
+            echo "源仓库内容:"
+            ls -la source_repo/
             exit 1
           fi
           
           # 确保目标目录存在
-          mkdir -p "$(dirname "$TARGET_PATH")"
+          mkdir -p "$TARGET_PATH"
+          
+          # 设置时区
+          export TZ='Asia/Shanghai'
           
           # 根据同步模式执行不同的rsync命令
           if [ "${{ env.sync_mode }}" = "增量" ]; then
-            echo "🔄 执行增量同步（别人有我有→更新，别人无我有→复制，别人有我无→不管）"
-            # -u: 只更新（目标中更新的文件不覆盖）
-            # --ignore-existing: 忽略目标中已存在的文件
-            # 实际上标准的增量是：源有目标无→复制，源新目标旧→更新，源无目标有→保留
-            rsync -rltvh --progress "$SOURCE_PATH"/ "$TARGET_PATH"/
+            echo "🔄 执行增量同步（时间戳+大小校验）"
+            # -a: 归档模式（保持权限、时间戳等）
+            # -v: 显示详细信息
+            # --times: 保持时间戳
+            # --exclude=.git/: 排除.git目录
+            rsync -av --times --exclude=".git/" "$SOURCE_PATH/" "$TARGET_PATH/"
           else
             echo "🔄 执行覆盖同步（使目标与源完全一致）"
-            # --delete: 删除目标中存在但源中不存在的文件
-            rsync -rltvh --progress --delete "$SOURCE_PATH"/ "$TARGET_PATH"/
+            rsync -av --delete --force --times --exclude=".git/" "$SOURCE_PATH/" "$TARGET_PATH/"
           fi
           
           echo "✅ 文件同步完成"
           
-          # 显示同步结果
-          echo "=== 同步结果 ==="
-          echo "源目录内容:"
-          ls -la "$SOURCE_PATH" | head -10
-          echo "..."
-          echo "目标目录内容:"
-          ls -la "$TARGET_PATH" | head -10
-          echo "..."
+          # 显示同步结果（简化版）
+          echo "=== 同步结果预览 ==="
+          echo "目标目录内容（前10项）:"
+          find "$TARGET_PATH" -type f | head -10 | while read file; do
+            echo "  $(basename "$file")"
+          done
 
-      # 7. 检查是否有变化需要提交
+      # 8. 检查是否有变化需要提交
       - name: 🔍 检查文件变化
         id: check_changes
         run: |
           echo "=== 检查文件变化 ==="
           cd target_repo
+          
+          # 设置Git配置
+          git config user.name "Auto Sync Bot"
+          git config user.email "sync-bot@noreply.github.com"
           
           # 检查git状态
           git status --porcelain
@@ -244,21 +326,20 @@ jobs:
             
             # 显示具体变化
             echo "=== 具体变化 ==="
-            git status
-            git diff --stat
+            git status -s
           else
             echo "✅ 无文件变化，无需提交"
             echo "changes_detected=false" >> $GITHUB_OUTPUT
           fi
 
-      # 8. 提交和推送变化
+      # 9. 提交和推送变化
       - name: 📤 提交并推送更改
         if: steps.check_changes.outputs.changes_detected == 'true'
         run: |
           echo "=== 提交更改 ==="
           cd target_repo
           
-          # 配置Git用户
+          # 配置Git用户（再次确认）
           git config user.name "Auto Sync Bot"
           git config user.email "sync-bot@noreply.github.com"
           
@@ -306,39 +387,47 @@ jobs:
           
           echo "✅ 推送完成"
 
-      # 9. 生成同步报告
+      # 10. 生成同步报告
       - name: 📊 生成同步报告
         run: |
           echo "=== 🔄 同步报告 ==="
           echo ""
-          echo "✅ 同步任务完成"
-          echo ""
-          echo "📌 同步模式: ${{ env.sync_mode }}"
-          echo ""
-          echo "📥 源仓库:"
-          echo "   平台: GitHub"
-          echo "   仓库: ${{ env.source_user }}/${{ env.source_repo }}"
-          echo "   分支: ${{ env.source_branch }}"
-          echo "   目录: ${{ env.source_folder || '根目录' }}"
-          echo ""
-          echo "📤 目标仓库:"
-          echo "   平台: ${{ env.target_platform }}"
-          echo "   仓库: ${{ env.target_user }}/${{ env.target_repo }}"
-          echo "   分支: ${{ env.target_branch }}"
-          echo "   目录: ${{ env.target_folder || '根目录' }}"
-          echo ""
           
           if [ "${{ steps.check_changes.outputs.changes_detected }}" = "true" ]; then
+            echo "✅ 同步任务完成"
+            echo ""
+            echo "📌 同步模式: ${{ env.sync_mode }}"
+            echo ""
+            echo "📥 源仓库:"
+            echo "   平台: GitHub"
+            echo "   仓库: ${{ env.source_user }}/${{ env.source_repo }}"
+            echo "   分支: ${{ env.source_branch }}"
+            echo "   目录: ${{ env.source_folder || '根目录' }}"
+            echo ""
+            echo "📤 目标仓库:"
+            echo "   平台: ${{ env.target_platform }}"
+            echo "   仓库: ${{ env.target_user }}/${{ env.target_repo }}"
+            echo "   分支: ${{ env.target_branch }}"
+            echo "   目录: ${{ env.target_folder || '根目录' }}"
+            echo ""
             echo "🔄 同步结果: 检测到文件变化并已提交推送"
           else
-            echo "ℹ️ 同步结果: 无文件变化，无需提交"
+            echo "ℹ️ 同步结果"
+            echo ""
+            echo "📌 同步模式: ${{ env.sync_mode }}"
+            echo ""
+            echo "源仓库: ${{ env.source_user }}/${{ env.source_repo }}"
+            echo "目标仓库: ${{ env.target_user }}/${{ env.target_repo }}"
+            echo ""
+            echo "ℹ️ 无文件变化，无需提交"
+            echo "源文件与目标文件完全一致（时间戳+大小匹配）"
           fi
           
           echo ""
           echo "⏰ 完成时间: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
           echo "=========================================="
 
-      # 10. 错误处理
+      # 11. 错误处理
       - name: 🚨 错误处理
         if: failure()
         run: |
@@ -350,4 +439,7 @@ jobs:
           echo "2. 检查仓库地址和分支是否存在"
           echo "3. 检查文件夹路径是否正确"
           echo "4. 检查网络连接是否正常"
+          echo "5. 检查目标仓库是否已创建"
+          echo ""
+          echo "💡 提示: 你可以尝试手动创建目标仓库后再运行此工作流"
           exit 1
