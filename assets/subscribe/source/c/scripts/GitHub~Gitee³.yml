@@ -1,5 +1,5 @@
-name: '🌐 GitHub ↔ Gitee ③ 跨平台仓库同步'
-
+name: '🌐 GitHub ↔ Gitee ③'
+# 🌐 GitHub ↔ Gitee ③ 跨平台仓库同步
 on:
   workflow_dispatch:
     inputs:
