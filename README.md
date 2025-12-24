@@ -385,7 +385,7 @@ docker run -d -p 5180:5180 xiaoran67/core
 
 ## Star统计
 
-[![Star统计](https://starchart.cc/xiaoran67/core.svg?variant=adaptive)](https://starchart.cc/xiaoran67/core)
+[![Star History](https://starchart.cc/xiaoran67/update.svg?variant=adaptive)](https://starchart.cc/xiaoran67/update)
 
 ## 捐赠
 
