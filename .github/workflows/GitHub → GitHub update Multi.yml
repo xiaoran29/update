@@ -1,4 +1,4 @@
-name: '🔀 GitHub → GitHub 67→37 update'
+name: '🔀 GitHub → GitHub update'
 # Cross Repository Multi-Platform Sync
 # 跨仓库多平台同步（增量+覆盖）🔄🔀♻️⚡🚀🌐🔧✅
 on:
@@ -442,4 +442,5 @@ jobs:
           echo "5. 检查目标仓库是否已创建"
           echo ""
           echo "💡 提示: 你可以尝试手动创建目标仓库后再运行此工作流"
+
           exit 1

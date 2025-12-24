@@ -1,8 +1,5 @@
 name: 🚀 Update simple
 on:
-  push:
-    paths:
-      - "output/*.txt"  # 监听 output 目录下的 .txt 文件变更
   schedule:
     - cron: '50 21 * * *'  
   workflow_dispatch:
@@ -48,5 +45,3 @@ jobs:
 
       - name: 调试输出
         run: echo "✅ 执行完成，触发源：${{ github.event_name }}"
-
-

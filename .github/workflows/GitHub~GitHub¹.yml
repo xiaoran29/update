@@ -1,4 +1,4 @@
-name: '🔄 GitHub → GitHub ①'
+name: '🔄 GitHub → GitHub core¹'
 # Cross-repository synchronization（时间戳+大小双校验）
 # 跨仓库同步（高效增量+覆盖）🔄🔀♻️⚡🚀🌐🔧✅
 on:
@@ -240,3 +240,4 @@ jobs:
             echo "❌ 同步失败，请查看日志排查问题"
             exit 1
           fi
+

@@ -1,4 +1,4 @@
-name: '🌐 GitHub ↔ Gitee ③'
+name: '🌐 GitHub ↔ Gitee core³'
 # 🌐 GitHub ↔ Gitee ③ 跨平台仓库同步
 on:
   workflow_dispatch:

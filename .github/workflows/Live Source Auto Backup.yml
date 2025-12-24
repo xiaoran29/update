@@ -9,12 +9,7 @@ on:
         description: '清理天数（默认7）'
         required: false
         default: '7'
-  push:
-    branches:
-      - main
-    paths:
-      - 'output/**'
-
+        
 jobs:
   backup-and-push:
     runs-on: ubuntu-latest

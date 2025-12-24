@@ -1,4 +1,4 @@
-name: '🚀 GitHub ↔ Gitee ④'
+name: '🚀 GitHub ↔ Gitee core⁴'
 
 on:
   workflow_dispatch:
