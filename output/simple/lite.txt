@@ -1,4 +1,4 @@
-# 更新标记: 2026-01-27 21:55:42
+# 更新标记: 2026-01-28 22:01:23
 🌐央视频道,#genre#
 CCTV1,http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv1hd/1200/index.m3u8?msisdn=20260126063657dd3bb90983d04a61b339a75b2688510e&mdspid=&spid=699004&netType=4&sid=2201057821&pid=2028597139&timestamp=20260126063657&Channel_ID=0116_2600001300-99000-201600010013233&ProgramID=608807420&ParentNodeID=-99&assertID=2201057821&client_ip=61.139.65.109&SecurityKey=20260126063657&promotionId=&mvid=2201057821&mcid=500020&playurlVersion=WX-A1-9.1.1.3-RELEASE&userid=&jmhm=&videocodec=h264&appCode=miguvideo_android&bean=mgspad&tid=android&conFee=0&encrypt=5ad712399791ec496c6ccbe411c38a47
 CCTV2,http://pull-hls-f1.douyincdn.com/media/stream-695106910011261612/playlist.m3u8?arch_hrchy=w1&exp_hrchy=w1&keeptime=00093a80&major_anchor_level=common&t_id=037-202601211138448FA9B998510F771A8747-9PrRHC&wsSecret=de5da072805f2c6d3fe8427464714c6f&wsTime=69704a44
