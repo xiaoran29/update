@@ -1,4 +1,4 @@
-# 更新标记: 2026-03-02 22:03:31
+# 更新标记: 2026-03-03 22:02:10
 ◆◆◆　https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interface.txt
 更新日期: 2026-3-2 12:27:47,http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/cctv1hd265/51/20191230/01.m3u8?msisdn=c51d5bdf7da3f733f5f7fec9903f7fae&mdspid=&spid=699004&netType=4&sid=2201057821&pid=2028597139&timestamp=20260302113146&Channel_ID=0116_2600031500-99000-200300140100004&ProgramID=608807420&ParentNodeID=-99&assertID=2201057821&client_ip=36.137.59.12&SecurityKey=20260302113146&promotionId=&mvid=2201057821&mcid=500020&playurlVersion=ZQ-A1-9.2.2-RELEASE&userid=&jmhm=&videocodec=h265&appCode=miguvideo_android&bean=mgspad&tid=android&conFee=0&mtv_session=de824490954e19abbd46c4c6acc747f0&sv=10004&ct=android&playUrlSsn=c51d5bdf7da3f733f5f7fec9903f7fae1772422306285&prlId=c51d5bdf7da3f733f5f7fec9903f7fae1772422306394&jid=c51d5bdf7da3f733f5f7fec9903f7fae1772422306050V&is_advertise=0&sjid=subsession_1772422306756&HlsSubType=1&HlsProfileId=1&nphaid=0&encrypt=a29a1009c1d12bf564a338c7a9850096
 广东移动,http://183.11.239.36:808/hls/14/index.m3u8
